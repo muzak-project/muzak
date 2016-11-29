@@ -13,7 +13,8 @@ and the state of the player.
 
 ### TODO
 
-* current indexing logic is terrible
+* current indexing/sorting logic is terrible
+* index's timestamp should be used for automatic reindexing
 * album art logic for `mpv` is funky
 * all the documentation
-* readline's tab complete is terrible with spaces
+* readline's tab complete is terrible with spaces (maybe use `bond`?)

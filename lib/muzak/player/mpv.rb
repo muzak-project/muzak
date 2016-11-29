@@ -4,7 +4,7 @@ require "json"
 
 module Muzak
   module Player
-    class MPV < StubPlayer
+    class MPV
       include Utils
 
       def initialize

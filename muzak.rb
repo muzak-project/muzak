@@ -13,15 +13,16 @@ muzak = Muzak::Instance.new(opts)
 COMMANDS = Muzak::Cmd.humanize_commands!
 
 CONFIG_REGEX = /^config-(get)|(set)|(del)/
-ARTIST_REGEX = Regexp.union COMMANDS.select{ |c| c =~ /artist/ }.map { |c| /^#{c} / }
-ALBUM_REGEX = Regexp.union COMMANDS.select{ |c| c =~ /album/ }.map { |c| /^#{c} / }
+ARTIST_REGEX = Regexp.union COMMANDS.select{ |c| c =~ /artist/ }.map { |c| /^#{c}/ }
+ALBUM_REGEX = Regexp.union COMMANDS.select{ |c| c =~ /album/ }.map { |c| /^#{c}/ }
 
 comp = proc do |s|
   case Readline.line_buffer
   when CONFIG_REGEX
     muzak.config.keys.grep(Regexp.new(Regexp.escape(s)))
   when ARTIST_REGEX
-    muzak.index.artists.grep(Regexp.new(Regexp.escape(s)))
+    ss = Readline.line_buffer.split(" ")
+    muzak.index.artists.grep(Regexp.new(Regexp.escape(ss[1..-1].join(" "))))
   when ALBUM_REGEX
     muzak.index.album_names.grep(Regexp.new(Regexp.escape(s)))
   else

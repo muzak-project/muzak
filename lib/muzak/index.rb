@@ -73,7 +73,9 @@ module Muzak
       error "no such artist: '#{artist}'" unless @hash["artists"].key?(artist)
 
       begin
-        albums_by(artist).keys.map { |a| albums_by(artist)[a]["songs"].sort }.flatten
+        albums_by(artist).map do |_, album|
+          album["songs"].map { |s| File.basename(s) }.sort
+        end.flatten
       rescue Exception => e
         []
       end

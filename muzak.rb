@@ -8,7 +8,6 @@ opts = {
   batch: ARGV.include?("--batch") || ARGV.include?("-b")
 }
 
-
 muzak = Muzak::Instance.new(opts)
 
 COMMANDS = Muzak::Cmd.humanize_commands!

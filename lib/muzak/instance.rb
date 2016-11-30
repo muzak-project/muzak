@@ -3,7 +3,7 @@ module Muzak
     include Cmd
     include Utils
 
-    def method_missing(meth)
+    def method_missing(meth, *args)
       warn "unknown command: #{meth.to_s}"
       help
     end

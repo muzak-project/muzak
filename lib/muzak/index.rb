@@ -10,7 +10,6 @@ module Muzak
     end
 
     def initialize(tree)
-      puts tree
       @hash = {
         "timestamp" => Time.now.to_i,
         "artists" => {}

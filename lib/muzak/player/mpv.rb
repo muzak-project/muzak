@@ -7,16 +7,18 @@ module Muzak
     class MPV
       include Utils
 
-      def initialize
-        @running = false
-      end
-
       def running?
-        @running
+        begin
+          @pid && Process.waitpid(@pid, Process::WNOHANG).nil?
+        rescue Errno::ECHILD
+          false
+        end
       end
 
       def activate!
         return if running?
+
+        debug "activating #{self.class}"
 
         @sock_path = Dir::Tmpname.make_tmpname("/tmp/mpv", ".sock")
         mpv_args = [
@@ -32,18 +34,19 @@ module Muzak
         end
 
         @socket = UNIXSocket.new(@sock_path)
-        @running = true
       end
 
       def deactivate!
         return unless running?
+
+        debug "deactivating #{self.class}"
 
         command("quit")
         Process.kill :TERM, @pid
         Process.wait @pid
         @socket.close
         File.delete(@sock_path) if File.exists?(@sock_path)
-        @running = false
+        @pid = nil
       end
 
       def play

@@ -11,8 +11,8 @@ module Muzak
     attr_reader :config, :player, :index
 
     def initialize(opts = {})
-      @debug = opts[:debug]
-      @verbose = opts[:verbose]
+      $debug = opts[:debug]
+      $verbose = opts[:verbose]
 
       debug "muzak is starting..."
 

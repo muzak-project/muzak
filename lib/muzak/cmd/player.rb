@@ -10,11 +10,9 @@ module Muzak
     end
 
     def player_deactivate
-      unless @player.running?
-        warn "player is not running"
-        return
-      end
+      warn "player is not running" unless @player.running?
 
+      # do cleanup even if the player isn't running, just in case
       @player.deactivate!
     end
 
@@ -38,7 +36,11 @@ module Muzak
       artist = args.join(" ")
       return if artist.nil?
 
-      @player.enqueue @index.songs_by(artist)
+      albums = @index.albums_by(artist)
+
+      albums.each do |_, album|
+        @player.enqueue album["songs"], album["cover"]
+      end
     end
 
     def enqueue_album(*args)

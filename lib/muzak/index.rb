@@ -1,7 +1,5 @@
 module Muzak
   class Index
-    include Utils
-
     attr_accessor :hash
 
     def self.load_index(file)

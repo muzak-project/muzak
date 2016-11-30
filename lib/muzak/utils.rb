@@ -1,11 +1,11 @@
 module Muzak
   module Utils
     def debug?
-      !!@debug
+      !!$debug
     end
 
     def verbose?
-      !!@verbose
+      !!$verbose
     end
 
     def pretty(color = :none, str)

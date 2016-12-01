@@ -1,6 +1,7 @@
 require "tempfile"
 require "socket"
 require "json"
+require "thread"
 
 module Muzak
   module Player
@@ -11,8 +12,6 @@ module Muzak
 
       def initialize(instance)
         @instance = instance
-        @queue = []
-        @index = -1
       end
 
       def running?
@@ -48,6 +47,14 @@ module Muzak
         end
 
         @socket = UNIXSocket.new(@sock_path)
+
+        @command_queue = Queue.new
+        @result_queue = Queue.new
+        @event_queue = Queue.new
+
+        @command_thread = Thread.new { pump_commands! }
+        @results_thread = Thread.new { pump_results! }
+        @events_thread = Thread.new { dispatch_events! }
       end
 
       def deactivate!
@@ -56,11 +63,14 @@ module Muzak
         debug "deactivating #{self.class}"
 
         command "quit"
+
         Process.kill :TERM, @pid
         Process.wait @pid
-        @socket.close
-        File.delete(@sock_path) if File.exists?(@sock_path)
         @pid = nil
+
+        @socket.close
+      ensure
+        File.delete(@sock_path) if File.exists?(@sock_path)
       end
 
       def play
@@ -82,59 +92,80 @@ module Muzak
       end
 
       def next_song
-        return unless running?
-        return if @index >= @queue.length
-
-        load_song *@queue[@index += 1]
+        command "playlist-next"
       end
 
       def previous_song
-        return unless running?
-        return if @index <= 0
-
-        load_song *@queue[@index -= 1]
+        command "playlist-prev"
       end
 
       def enqueue_album(album)
         activate! unless running?
 
         album.songs.each do |song|
-          @queue << [song, album.cover_art]
+          cmds = ["loadfile", song.path, "append-play"]
+          cmds << "external-file=#{album.cover_art}" if album.cover_art
+          command *cmds
         end
-
-        next_song if @index < 0 # start playing if the user starts a new queue
-      end
-
-      def list_queue
-        @queue.map { |e| e.first.path }
       end
 
       def shuffle_queue
-        @queue.shuffle!
-        @index = 0
+        command "playlist-shuffle"
       end
 
       def clear_queue
-        @queue = []
-        @index = -1
+        command "playlist-clear"
       end
 
       def now_playing
-        return "nothing is playing" unless running?
-
         get_property "media-title"
       end
 
       private
 
-      def load_song(song, album_art = nil)
-        cmds = ["loadfile", song.path, "replace"]
-        cmds << "external-file=#{album_art}" if album_art
+      def pump_commands!
+        loop do
+          begin
+            @socket.puts(@command_queue.pop)
+          rescue EOFError # the player is deactivating
+            Thread.exit
+          end
+        end
+      end
 
-        command *cmds
+      def pump_results!
+        loop do
+          begin
+            response = JSON.parse(@socket.readline)
 
-        debug "#{self.class} sending song_loaded event"
-        instance.event :song_loaded, song
+            if response["event"]
+              @event_queue << response["event"]
+            else
+              @result_queue << response
+            end
+          rescue EOFError # the player is deactivating
+            Thread.exit
+          end
+        end
+      end
+
+      def dispatch_events!
+        loop do
+          event = @event_queue.pop
+
+          Thread.new do
+            case event
+            when "file-loaded"
+              # this really isn't ideal, since we already have access
+              # to Song objects earlier in the object's lifetime.
+              # the "correct" way to do this would be to sync an external
+              # playlist with mpv's internal one and access that instead
+              # of re-creating the Song from mpv properties.
+              song = Song.new(get_property "path")
+              instance.event :song_loaded, song
+            end
+          end
+        end
       end
 
       def command(*args)
@@ -146,17 +177,9 @@ module Muzak
 
         debug "mpv payload: #{payload.to_s}"
 
-        @socket.puts(JSON.generate(payload))
+        @command_queue << JSON.generate(payload)
 
-        loop do
-          response = JSON.parse(@socket.readline)
-
-          next if response["event"]
-
-          error "mpv: #{response["error"]}" if response["error"] != "success"
-
-          return response
-        end
+        @result_queue.pop
       end
 
       def set_property(*args)

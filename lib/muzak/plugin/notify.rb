@@ -2,7 +2,9 @@ module Muzak
   module Plugin
     class Notify < StubPlugin
       def song_loaded(song)
-        notify song.title
+        msg = song.title
+        msg << " by #{song.artist}" if song.artist
+        notify msg
       end
 
       private

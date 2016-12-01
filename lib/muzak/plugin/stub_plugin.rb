@@ -5,6 +5,7 @@ module Muzak
 
       def initialize(instance)
         @instance = instance
+        puts "loading #{self.class}"
       end
 
       PLUGIN_EVENTS.each do |event|

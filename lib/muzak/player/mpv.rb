@@ -112,6 +112,8 @@ module Muzak
       end
 
       def now_playing
+        return "nothing is playing" unless running?
+
         get_property "media-title"
       end
 
@@ -123,6 +125,7 @@ module Muzak
 
         command *cmds
 
+        debug "#{self.class} sending song_loaded event"
         instance.event :song_loaded, song
       end
 

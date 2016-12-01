@@ -1,5 +1,6 @@
 module Muzak
   class Index
+    include Utils
     attr_accessor :hash
 
     def self.load_index(file)
@@ -64,7 +65,7 @@ module Muzak
       begin
         @hash["artists"][artist]["albums"]
       rescue Exception => e
-        []
+        {}
       end
     end
 

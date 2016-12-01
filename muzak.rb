@@ -8,6 +8,8 @@ opts = {
   batch: ARGV.include?("--batch") || ARGV.include?("-b")
 }
 
+Thread.abort_on_exception = opts[:debug]
+
 muzak = Muzak::Instance.new(opts)
 
 COMMANDS = Muzak::Cmd.humanize_commands!

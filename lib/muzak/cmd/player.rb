@@ -36,21 +36,32 @@ module Muzak
       artist = args.join(" ")
       return if artist.nil?
 
-      albums = @index.albums_by(artist)
+      album_hashes = @index.albums_by(artist)
+      return if album_hashes.empty?
 
-      albums.each do |_, album|
-        @player.enqueue album["songs"], album["cover"]
+      albums = album_hashes.map do |album_name, album_hash|
+        Album.new(album_name, album_hash)
+      end
+
+      albums.each do |album|
+        @player.enqueue_album album
       end
     end
 
     def enqueue_album(*args)
-      album = args.join(" ")
-      return if album.nil?
+      album_name = args.join(" ")
+      return if album_name.nil?
 
-      album_hash = @index.albums[album]
+      album_hash = @index.albums[album_name]
       return if album_hash.nil?
 
-      @player.enqueue album_hash["songs"], album_hash["cover"]
+      album = Album.new(album_name, album_hash)
+
+      @player.enqueue_album album
+    end
+
+    def list_queue
+      puts @player.list_queue.join("\n")
     end
 
     def shuffle_queue

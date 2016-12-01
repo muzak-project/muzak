@@ -55,7 +55,7 @@ module Muzak
 
         debug "deactivating #{self.class}"
 
-        command("quit")
+        command "quit"
         Process.kill :TERM, @pid
         Process.wait @pid
         @socket.close
@@ -76,6 +76,8 @@ module Muzak
       end
 
       def playing?
+        return false unless running?
+
         !get_property "pause"
       end
 
@@ -83,22 +85,28 @@ module Muzak
         return unless running?
         return if @index >= @queue.length
 
-        load_song Song.new(@queue[@index += 1])
+        load_song *@queue[@index += 1]
       end
 
       def previous_song
         return unless running?
         return if @index <= 0
 
-        load_song Song.new(@queue[@index -= 1])
+        load_song *@queue[@index -= 1]
       end
 
-      def enqueue(files, album_art = nil)
+      def enqueue_album(album)
         activate! unless running?
 
-        @queue.concat files
+        album.songs.each do |song|
+          @queue << [song, album.cover_art]
+        end
 
         next_song if @index < 0 # start playing if the user starts a new queue
+      end
+
+      def list_queue
+        @queue.map { |e| e.first.path }
       end
 
       def shuffle_queue
@@ -143,7 +151,6 @@ module Muzak
         loop do
           response = JSON.parse(@socket.readline)
 
-          # we're not interested in event messages, only responses
           next if response["event"]
 
           error "mpv: #{response["error"]}" if response["error"] != "success"

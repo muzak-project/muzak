@@ -1,11 +1,12 @@
 module Muzak
   module Plugin
     class StubPlugin
+      include Utils
       attr_reader :instance
 
       def initialize(instance)
         @instance = instance
-        puts "loading #{self.class}"
+        debug "loading #{self.class}"
       end
 
       PLUGIN_EVENTS.each do |event|

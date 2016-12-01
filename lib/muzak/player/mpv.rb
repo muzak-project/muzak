@@ -7,6 +7,14 @@ module Muzak
     class MPV
       include Utils
 
+      attr_accessor :instance
+
+      def initialize(instance)
+        @instance = instance
+        @queue = []
+        @index = -1
+      end
+
       def running?
         begin
           @pid && Process.waitpid(@pid, Process::WNOHANG).nil?
@@ -23,9 +31,15 @@ module Muzak
         @sock_path = Dir::Tmpname.make_tmpname("/tmp/mpv", ".sock")
         mpv_args = [
           "--idle",
+          "--no-osc",
+          "--no-osd-bar",
+          "--no-input-default-bindings",
+          "--no-input-cursor",
           "--no-terminal",
           "--input-ipc-server=%{socket}" % { socket: @sock_path }
         ]
+
+        mpv_args << "--geometry=#{instance.config["art-geometry"]}" if instance.config["art-geometry"]
 
         @pid = Process.spawn("mpv", *mpv_args)
 
@@ -61,29 +75,56 @@ module Muzak
         set_property "pause", true
       end
 
-      def next
-        return unless running?
-
-        command "playlist-next"
+      def playing?
+        !get_property "pause"
       end
 
-      def previous
+      def next_song
         return unless running?
+        return if @index >= @queue.length
 
-        command "playlist-prev"
+        load_song Song.new(@queue[@index += 1])
+      end
+
+      def previous_song
+        return unless running?
+        return if @index <= 0
+
+        load_song Song.new(@queue[@index -= 1])
       end
 
       def enqueue(files, album_art = nil)
         activate! unless running?
 
-        files.each do |file|
-          cmds = ["loadfile", file, "append-play"]
-          cmds << "external-file=#{album_art}" if album_art
-          command *cmds
-        end
+        @queue.concat files
+
+        next_song if @index < 0 # start playing if the user starts a new queue
+      end
+
+      def shuffle_queue
+        @queue.shuffle!
+        @index = 0
+      end
+
+      def clear_queue
+        @queue = []
+        @index = -1
+      end
+
+      def now_playing
+        get_property "media-title"
       end
 
       private
+
+      def load_song(song, album_art = nil)
+        cmds = ["loadfile", song.path, "replace"]
+        cmds << "external-file=#{album_art}" if album_art
+
+        command *cmds
+
+        instance.event :song_loaded, song
+      end
 
       def command(*args)
         return unless running?
@@ -110,6 +151,10 @@ module Muzak
 
       def set_property(*args)
         command "set_property", *args
+      end
+
+      def get_property(*args)
+        command("get_property", *args)["data"]
       end
     end
   end

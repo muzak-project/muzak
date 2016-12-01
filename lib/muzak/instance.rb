@@ -22,7 +22,23 @@ module Muzak
       index_build unless _index_available?
       index_load
 
-      @player = Player::PLAYER_MAP[@config["player"]].new
+      @player = Player::PLAYER_MAP[@config["player"]].new(self)
+      @plugins = initialize_plugins!
+    end
+
+    def initialize_plugins!
+      plugin_klasses = Plugin.constants.map(&Plugin.method(:const_get)).grep(Class)
+      @plugins = plugin_klasses.map { |pk| pk.new(self) }
+    end
+
+    def event(type, *args)
+      return unless PLUGIN_EVENTS.include?(type)
+
+      @plugins.each do |plugin|
+        Thread.new do
+          plugin.send(type, *args)
+        end
+      end
     end
   end
 end

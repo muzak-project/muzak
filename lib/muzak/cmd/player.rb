@@ -25,11 +25,11 @@ module Muzak
     end
 
     def next
-      @player.next
+      @player.next_song
     end
 
     def previous
-      @player.previous
+      @player.previous_song
     end
 
     def enqueue_artist(*args)
@@ -51,6 +51,18 @@ module Muzak
       return if album_hash.nil?
 
       @player.enqueue album_hash["songs"], album_hash["cover"]
+    end
+
+    def shuffle_queue
+      @player.shuffle_queue
+    end
+
+    def clear_queue
+      @player.clear_queue
+    end
+
+    def now_playing
+      info @player.now_playing
     end
   end
 end

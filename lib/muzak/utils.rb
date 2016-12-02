@@ -34,13 +34,13 @@ module Muzak
     end
 
     def error(*args)
-      output pretty(:red, "error"), args
+      output pretty(:red, "error"), "[#{self.class.name}]", args
     end
 
     def debug(*args)
       return unless debug?
 
-      output pretty(:yellow, "debug"), args
+      output pretty(:yellow, "debug"), "[#{self.class.name}]", args
     end
 
     def verbose(*args)

@@ -2,7 +2,7 @@ require "taglib"
 
 module Muzak
   class Song
-    attr_reader :path, :title, :artist, :album, :year, :track, :genre, :comment
+    attr_reader :path, :title, :artist, :album, :year, :track, :genre, :comment, :length
 
     def initialize(path)
       @path = path
@@ -16,6 +16,7 @@ module Muzak
         @track = ref.tag.track
         @genre = ref.tag.genre
         @comment = ref.tag.comment
+        @length = ref.audio_properties.length
       end
     end
   end

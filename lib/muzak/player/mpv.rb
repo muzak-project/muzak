@@ -173,6 +173,8 @@ module Muzak
               # the "correct" way to do this would be to sync an external
               # playlist with mpv's internal one and access that instead
               # of re-creating the Song from mpv properties.
+              # another idea: serialize Song objects into mpv's properties
+              # somehow.
               song = Song.new(get_property "path")
               instance.event :song_loaded, song
             end

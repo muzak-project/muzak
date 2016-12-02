@@ -2,6 +2,11 @@ module Muzak
   module Plugin
     class StubPlugin
       include Utils
+
+      def self.plugin_name
+        name.split("::").last.downcase
+      end
+
       attr_reader :instance
 
       def initialize(instance)

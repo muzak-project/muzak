@@ -61,7 +61,7 @@ module Muzak
     end
 
     def list_queue
-      puts @player.list_queue.join("\n")
+      puts @player.list_queue.map(&:title)
     end
 
     def shuffle_queue

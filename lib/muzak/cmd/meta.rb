@@ -5,6 +5,11 @@ module Muzak
       info "available commands: #{commands}"
     end
 
+    def plugin_list
+      plugins = Plugin.plugin_names.join(", ")
+      puts "available plugins: #{plugins}"
+    end
+
     def quit
       debug "muzak is quitting..."
       @player.deactivate!

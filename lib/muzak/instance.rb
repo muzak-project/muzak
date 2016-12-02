@@ -4,7 +4,7 @@ module Muzak
     include Utils
 
     def method_missing(meth, *args)
-      warn "unknown command: #{meth.to_s}"
+      warn "unknown command: #{Cmd.resolve_method(meth)}"
       help
     end
 
@@ -27,8 +27,8 @@ module Muzak
     end
 
     def initialize_plugins!
-      plugin_klasses = Plugin.constants.map(&Plugin.method(:const_get)).grep(Class)
-      @plugins = plugin_klasses.map { |pk| pk.new(self) }
+      pks = Plugin.plugin_classes.select { |pk| _config_plugin? pk.plugin_name }
+      pks.map { |pk| pk.new(self) }
     end
 
     def event(type, *args)

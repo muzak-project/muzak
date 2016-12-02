@@ -29,6 +29,10 @@ module Muzak
       _config_sync
     end
 
+    def _config_plugin?(name)
+      @config.key?("plugin-#{name}")
+    end
+
     def config_load
       verbose "loading config from #{CONFIG_FILE}"
 

@@ -70,7 +70,7 @@ module Muzak
 
         @socket.close
       ensure
-        File.delete(@sock_path) if File.exists?(@sock_path)
+        File.delete(@sock_path) if @sock_path && File.exists?(@sock_path)
       end
 
       def play
@@ -107,6 +107,18 @@ module Muzak
           cmds << "external-file=#{album.cover_art}" if album.cover_art
           command *cmds
         end
+      end
+
+      def list_queue
+        entries = get_property "playlist/count"
+
+        playlist = []
+
+        entries.times do |i|
+          playlist << Song.new(get_property("playlist/#{i}/filename"))
+        end
+
+        playlist
       end
 
       def shuffle_queue

@@ -12,6 +12,11 @@ module Muzak
       end
 
       def song_loaded(song)
+        if song.title.nil? || song.artist.nil?
+          debug "cowardly refusing to scrobble a song ('#{song.path}') with missing metadata"
+          return
+        end
+
         scrobble song
       end
 

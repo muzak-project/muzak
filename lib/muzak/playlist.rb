@@ -28,6 +28,7 @@ module Muzak
     end
 
     def add(song)
+      return if @songs.include?(song)
       @songs << song
     end
 

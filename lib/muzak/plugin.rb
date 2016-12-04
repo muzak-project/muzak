@@ -1,6 +1,7 @@
 require_relative "plugin/stub_plugin"
 require_relative "plugin/notify"
 require_relative "plugin/scrobble"
+require_relative "plugin/cava"
 
 module Muzak
   module Plugin

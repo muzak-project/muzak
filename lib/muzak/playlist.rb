@@ -35,6 +35,10 @@ module Muzak
       @songs.delete(song)
     end
 
+    def shuffle!
+      @songs.shuffle!
+    end
+
     def to_hash
       { "songs" => songs }
     end

@@ -91,5 +91,13 @@ module Muzak
 
       playlist_sync
     end
+
+    def playlist_shuffle
+      return unless _playlist_loaded?
+
+      @playlist.shuffle!
+
+      playlist_sync
+    end
   end
 end

@@ -55,6 +55,8 @@ module Muzak
         @command_thread = Thread.new { pump_commands! }
         @results_thread = Thread.new { pump_results! }
         @events_thread = Thread.new { dispatch_events! }
+
+        instance.event :player_activated
       end
 
       def deactivate!
@@ -70,6 +72,7 @@ module Muzak
 
         @socket.close
       ensure
+        instance.event :player_deactivated
         File.delete(@sock_path) if @sock_path && File.exists?(@sock_path)
       end
 
@@ -122,7 +125,7 @@ module Muzak
 
         playlist.songs.each do |song|
           cmds = ["loadfile", song.path, "append-play"]
-          cmds << "external-file=#{album.cover_art}" if song.best_guess_album_art
+          cmds << "external-file=#{song.best_guess_album_art}" if song.best_guess_album_art
           command *cmds
         end
       end

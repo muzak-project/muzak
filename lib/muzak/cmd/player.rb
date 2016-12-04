@@ -73,7 +73,7 @@ module Muzak
     end
 
     def now_playing
-      info @player.now_playing
+      info @player.now_playing.full_title
     end
   end
 end

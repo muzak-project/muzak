@@ -80,15 +80,5 @@ module Muzak
         []
       end
     end
-
-    private
-
-    def music?(filename)
-      [".mp3", ".flac", ".m4a", ".wav", ".ogg", ".oga", ".opus"].include?(File.extname(filename))
-    end
-
-    def album_art?(filename)
-      File.basename(filename) =~ /(cover)|(folder).(jpg)|(png)/i
-    end
   end
 end

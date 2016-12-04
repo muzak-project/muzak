@@ -1,5 +1,13 @@
 module Muzak
   module Utils
+    def music?(filename)
+      [".mp3", ".flac", ".m4a", ".wav", ".ogg", ".oga", ".opus"].include?(File.extname(filename))
+    end
+
+    def album_art?(filename)
+      File.basename(filename) =~ /(cover)|(folder).(jpg)|(png)/i
+    end
+
     def debug?
       !!$debug
     end

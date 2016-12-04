@@ -2,6 +2,8 @@ require "taglib"
 
 module Muzak
   class Song
+    include Utils
+
     attr_reader :path, :title, :artist, :album, :year, :track, :genre, :comment, :length
 
     def initialize(path)
@@ -18,6 +20,24 @@ module Muzak
         @comment = ref.tag.comment
         @length = ref.audio_properties.length
       end
+    end
+
+    def best_guess_album_art
+      album_dir = File.dirname(path)
+
+      Dir.entries(album_dir).find { |ent| album_art?(ent) }
+    end
+
+    def full_title
+      full = title.dup
+      full << " by #{artist}" if artist
+      full << " on #{album}" if album
+
+      full
+    end
+
+    def ==(other)
+      path == other.path
     end
   end
 end

@@ -99,12 +99,30 @@ module Muzak
         command "playlist-prev"
       end
 
+      def enqueue_song(song)
+        activate! unless running?
+
+        cmds = ["loadfile", song.path, "append-play"]
+        cmds << "external-file=#{album.cover_art}" if song.best_guess_album_art
+        command *cmds
+      end
+
       def enqueue_album(album)
         activate! unless running?
 
         album.songs.each do |song|
           cmds = ["loadfile", song.path, "append-play"]
           cmds << "external-file=#{album.cover_art}" if album.cover_art
+          command *cmds
+        end
+      end
+
+      def enqueue_playlist(playlist)
+        activate! unless running?
+
+        playlist.songs.each do |song|
+          cmds = ["loadfile", song.path, "append-play"]
+          cmds << "external-file=#{album.cover_art}" if song.best_guess_album_art
           command *cmds
         end
       end
@@ -130,7 +148,7 @@ module Muzak
       end
 
       def now_playing
-        get_property "media-title"
+        Song.new(get_property "path")
       end
 
       private

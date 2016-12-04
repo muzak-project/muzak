@@ -8,7 +8,7 @@ module Muzak
       help
     end
 
-    attr_reader :config, :player, :index
+    attr_reader :config, :player, :index, :playlist
 
     def initialize(opts = {})
       $debug = opts[:debug]
@@ -23,6 +23,7 @@ module Muzak
       index_load
 
       @player = Player::PLAYER_MAP[@config["player"]].new(self)
+
       @plugins = initialize_plugins!
     end
 

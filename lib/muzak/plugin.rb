@@ -1,7 +1,7 @@
+# we have to require StubPlugin first because ruby's module resolution is bad
 require_relative "plugin/stub_plugin"
-require_relative "plugin/notify"
-require_relative "plugin/scrobble"
-require_relative "plugin/cava"
+
+Dir.glob(File.join(__dir__, "plugin/*")) { |file| require_relative file }
 
 module Muzak
   module Plugin

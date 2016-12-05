@@ -3,9 +3,7 @@ module Muzak
     attr_accessor :name, :songs
 
     def self.playlist_names
-      # Cmd::PLAYLIST_DIR should be moved outside of the Cmd namespace
-      # since we use it here
-      Dir.entries(Cmd::PLAYLIST_DIR).reject do |ent|
+      Dir.entries(PLAYLIST_DIR).reject do |ent|
         ent.start_with?(".")
       end.map do |ent|
         File.basename(ent, File.extname(ent))

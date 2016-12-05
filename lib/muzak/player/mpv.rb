@@ -5,15 +5,7 @@ require "thread"
 
 module Muzak
   module Player
-    class MPV
-      include Utils
-
-      attr_accessor :instance
-
-      def initialize(instance)
-        @instance = instance
-      end
-
+    class MPV < StubPlayer
       def running?
         begin
           !!@pid && Process.waitpid(@pid, Process::WNOHANG).nil?
@@ -105,18 +97,14 @@ module Muzak
       def enqueue_song(song)
         activate! unless running?
 
-        cmds = ["loadfile", song.path, "append-play"]
-        cmds << "external-file=#{song.best_guess_album_art}" if song.best_guess_album_art
-        command *cmds
+        load_song song, song.best_guess_album_art
       end
 
       def enqueue_album(album)
         activate! unless running?
 
         album.songs.each do |song|
-          cmds = ["loadfile", song.path, "append-play"]
-          cmds << "external-file=#{album.cover_art}" if album.cover_art
-          command *cmds
+          load_song song, album.cover_art
         end
       end
 
@@ -124,9 +112,7 @@ module Muzak
         activate! unless running?
 
         playlist.songs.each do |song|
-          cmds = ["loadfile", song.path, "append-play"]
-          cmds << "external-file=#{song.best_guess_album_art}" if song.best_guess_album_art
-          command *cmds
+          load_song song, song.best_guess_album_art
         end
       end
 
@@ -155,6 +141,12 @@ module Muzak
       end
 
       private
+
+      def load_song(song, art)
+        cmds = ["loadfile", song.path, "append-play"]
+        cmds << "external-file=#{art}" if art
+        command *cmds
+      end
 
       def pump_commands!
         loop do

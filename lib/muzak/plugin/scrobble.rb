@@ -8,7 +8,7 @@ module Muzak
 
       def initialize(instance)
         super
-        @username, @password = instance.config["plugin-scrobble"].split(":")
+        @username, @password_hash = instance.config["plugin-scrobble"].split(":")
       end
 
       def song_loaded(song)
@@ -23,7 +23,7 @@ module Muzak
       private
 
       def scrobble(song)
-        if @username.nil? || @password.nil?
+        if @username.nil? || @password_hash.nil?
           error "missing username or password"
           return
         end
@@ -49,7 +49,7 @@ module Muzak
           return
         end
 
-        session_token = Digest::MD5.hexdigest(Digest::MD5.hexdigest(@password) + token)
+        session_token = Digest::MD5.hexdigest(@password_hash + token)
 
         request_params = {
           "u" => @username,

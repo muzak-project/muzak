@@ -1,7 +1,5 @@
 module Muzak
   module Cmd
-    PLAYLIST_DIR = File.join(CONFIG_DIR, "playlists")
-
     def _playlist_file(pname)
       File.join(PLAYLIST_DIR, pname) + ".yml"
     end

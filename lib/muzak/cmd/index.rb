@@ -1,7 +1,5 @@
 module Muzak
   module Cmd
-    INDEX_FILE = File.join(CONFIG_DIR, "index.yml")
-
     def _index_available?
       File.file?(INDEX_FILE)
     end

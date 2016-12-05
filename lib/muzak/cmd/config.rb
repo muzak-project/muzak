@@ -2,8 +2,6 @@ require "yaml"
 
 module Muzak
   module Cmd
-    CONFIG_FILE = File.join(CONFIG_DIR, "muzak.yml")
-
     def _config_available?
       File.file?(CONFIG_FILE)
     end

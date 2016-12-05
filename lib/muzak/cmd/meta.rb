@@ -5,7 +5,7 @@ module Muzak
       info "available commands: #{commands}"
     end
 
-    def plugin_list
+    def list_plugins
       plugins = Plugin.plugin_names.join(", ")
       puts "available plugins: #{plugins}"
     end

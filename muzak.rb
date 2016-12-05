@@ -38,6 +38,9 @@ end
 Readline.completion_append_character = " "
 Readline.completion_proc = comp
 
+# ignore interrupts
+trap("INT", "SIG_IGN")
+
 while line = Readline.readline("muzak> ", true)
   cmd_argv = Shellwords.split(line) rescue next
   next if cmd_argv.empty? || cmd_argv.any?(&:empty?)

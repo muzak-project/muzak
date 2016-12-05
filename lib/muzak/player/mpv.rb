@@ -106,7 +106,7 @@ module Muzak
         activate! unless running?
 
         cmds = ["loadfile", song.path, "append-play"]
-        cmds << "external-file=#{album.cover_art}" if song.best_guess_album_art
+        cmds << "external-file=#{song.best_guess_album_art}" if song.best_guess_album_art
         command *cmds
       end
 

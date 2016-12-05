@@ -27,6 +27,7 @@ module Muzak
           "--no-input-default-bindings",
           "--no-input-cursor",
           "--no-terminal",
+          "--load-scripts=no", # autoload and other scripts with clobber our mpv management
           "--input-ipc-server=%{socket}" % { socket: @sock_path }
         ]
 

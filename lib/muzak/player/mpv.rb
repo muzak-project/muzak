@@ -16,7 +16,7 @@ module Muzak
 
       def running?
         begin
-          @pid && Process.waitpid(@pid, Process::WNOHANG).nil?
+          !!@pid && Process.waitpid(@pid, Process::WNOHANG).nil?
         rescue Errno::ECHILD
           false
         end

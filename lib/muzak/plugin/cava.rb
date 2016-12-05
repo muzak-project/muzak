@@ -8,6 +8,7 @@ module Muzak
       def initialize(instance)
         super
         @term_args = Shellwords.split instance.config["plugin-cava"]
+        @pid = nil
       end
 
       def player_activated
@@ -22,7 +23,7 @@ module Muzak
 
       def cava_running?
         begin
-          @pid && Process.waitpid(@pid, Process::WNOHANG).nil?
+          !!@pid && Process.waitpid(@pid, Process::WNOHANG).nil?
         rescue Errno::ECHILD
           false
         end

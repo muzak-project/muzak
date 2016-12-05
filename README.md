@@ -11,6 +11,24 @@ and the state of the player.
 
 ![screenshot](https://sr.ht/A-oS.png)
 
+### Usage
+
+Muzak is still a work in process. Don't expect stability or pleasant output.
+
+On the command-line:
+
+```shell
+$ ruby -Ilib muzak.rb # flags: --verbose, --debug
+muzak> help
+```
+
+Daemonized:
+
+```shell
+$ ruby -Ilib muzakd.rb
+echo "command" > ~/.config/muzak/muzak.fifo
+```
+
 ### TODO
 
 * current indexing/sorting logic is terrible

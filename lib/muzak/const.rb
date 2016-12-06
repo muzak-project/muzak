@@ -1,4 +1,6 @@
 module Muzak
+  VERSION = "0.0.1".freeze
+
   CONFIG_DIR = File.expand_path("~/.config/muzak").freeze
   CONFIG_FILE = File.join(CONFIG_DIR, "muzak.yml").freeze
   INDEX_FILE = File.join(CONFIG_DIR, "index.yml").freeze

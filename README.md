@@ -18,15 +18,16 @@ Muzak is still a work in process. Don't expect stability or pleasant output.
 On the command-line:
 
 ```shell
-$ ruby -Ilib muzak.rb # flags: --verbose, --debug
+$ ruby -Ilib bin/muzak.rb # flags: --verbose, --debug
 muzak> help
 ```
 
 Daemonized:
 
 ```shell
-$ ruby -Ilib muzakd.rb
-echo "command" > ~/.config/muzak/muzak.fifo
+$ ruby -Ilib bin/muzakd.rb
+$ echo "command" > ~/.config/muzak/muzak.fifo
+$ ruby -Ilib bin/muzak-cmd "command"
 ```
 
 ### TODO

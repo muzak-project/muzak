@@ -14,7 +14,7 @@ Thread.abort_on_exception = opts[:debug]
 
 muzak = Muzak::Instance.new(opts)
 
-COMMANDS = Muzak::Cmd.humanize_commands!
+COMMANDS = Muzak::Cmd.commands
 
 CONFIG_REGEX = /^config-(get)|(set)|(del)/
 ARTIST_REGEX = Regexp.union COMMANDS.select{ |c| c =~ /artist/ }.map { |c| /^#{c}/ }

@@ -9,13 +9,13 @@ opts = {
   batch: ARGV.include?("--batch") || ARGV.include?("-b")
 }
 
-Process.daemon
-
+Process.daemon unless opts[:debug] || opts[:verbose]
 Thread.abort_on_exception = opts[:debug]
 
 muzak = Muzak::Instance.new(opts)
 
 fifo_path = File.join(Muzak::CONFIG_DIR, "muzak.fifo")
+File.delete(fifo_path) if File.exist?(fifo_path) # just in case a previous session died
 File.mkfifo(fifo_path)
 
 File.open(fifo_path, "r") do |fifo|

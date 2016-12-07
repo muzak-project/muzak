@@ -6,7 +6,6 @@ require "shellwords"
 opts = {
   debug: ARGV.include?("--debug") || ARGV.include?("-d"),
   verbose: ARGV.include?("--verbose") || ARGV.include?("-v"),
-  batch: ARGV.include?("--batch") || ARGV.include?("-b")
 }
 
 Process.daemon unless opts[:debug] || opts[:verbose]

@@ -31,8 +31,9 @@ echo "command" > ~/.config/muzak/muzak.fifo
 
 ### TODO
 
+* GUI "frontend"?
+* optional "deep" index containing ID3 tags
+* isolation of art and music output (`Muzak::ArtProvider`?)
 * current indexing/sorting logic is terrible
-* index's timestamp should be used for automatic reindexing
-* album art logic for `mpv` is funky
 * all the documentation
 * readline's tab complete is terrible with spaces (maybe use `bond`?)

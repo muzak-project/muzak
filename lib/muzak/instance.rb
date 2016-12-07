@@ -24,9 +24,9 @@ module Muzak
 
       @player = Player::PLAYER_MAP[@config["player"]].new(self)
 
-      playlist_load @config["default-playlist"] if @config["default-playlist"]
-
       @plugins = initialize_plugins!
+
+      playlist_load @config["default-playlist"] if @config["default-playlist"]
     end
 
     def initialize_plugins!

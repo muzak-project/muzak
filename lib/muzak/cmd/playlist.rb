@@ -30,6 +30,8 @@ module Muzak
         @playlist = Playlist.new(pname, [])
         playlist_sync
       end
+
+      event :playlist_loaded, @playlist
     end
 
     def playlist_delete(*args)
@@ -56,6 +58,7 @@ module Muzak
       return unless _playlist_loaded?
 
       @player.enqueue_playlist(@playlist)
+      event :playlist_enqueued, @playlist
     end
 
     def playlist_add_album(*args)

@@ -21,6 +21,7 @@ module Muzak
       @config = {
         "music" => File.expand_path("~/music"),
         "player" => "mpv",
+        "index-autobuild" => 86400
       }
 
       Dir.mkdir(CONFIG_DIR) unless Dir.exist?(CONFIG_DIR)
@@ -35,32 +36,6 @@ module Muzak
       verbose "loading config from #{CONFIG_FILE}"
 
       @config = YAML::load_file(CONFIG_FILE)
-    end
-
-    def config_set(*args)
-      return unless _config_loaded?
-
-      fail_arity(args, 2)
-      key, value = args
-      return if key.nil? || value.nil?
-
-      debug "setting '#{key}' to '#{value}' in config"
-
-      @config[key] = value
-      _config_sync
-    end
-
-    def config_del(*args)
-      return unless _config_loaded?
-
-      fail_arity(args, 1)
-      key = args.shift
-      return if key.nil?
-
-      debug "removing '#{key}' from config"
-
-      @config.delete(key)
-      _config_sync
     end
 
     def config_get(*args)

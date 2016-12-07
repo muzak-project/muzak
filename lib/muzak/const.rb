@@ -10,6 +10,8 @@ module Muzak
   PLUGIN_EVENTS = [
     :player_activated,
     :player_deactivated,
-    :song_loaded
+    :song_loaded,
+    :playlist_loaded,
+    :playlist_enqueued
   ]
 end

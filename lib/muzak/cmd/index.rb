@@ -8,6 +8,10 @@ module Muzak
       !!@index
     end
 
+    def _index_outdated?
+      Time.now.to_i - @index["timestamp"] >= @config["index-autobuild"]
+    end
+
     def _index_sync
       debug "syncing index hash with #{INDEX_FILE}"
       File.open(INDEX_FILE, "w") { |io| io.write @index.hash.to_yaml }
@@ -17,6 +21,13 @@ module Muzak
       debug "loading index from #{INDEX_FILE}"
 
       @index = Index.load_index(INDEX_FILE)
+
+      # the order is important here, since @config["index-autobuild"]
+      # will short-circuit if index-autobuild isn't set
+      if @config["index-autobuild"] && _index_outdated?
+        verbose "rebuilding outdated index"
+        index_build
+      end
     end
 
     def index_build(*args)

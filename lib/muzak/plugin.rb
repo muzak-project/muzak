@@ -1,10 +1,14 @@
 # we have to require StubPlugin first because ruby's module resolution is bad
 require_relative "plugin/stub_plugin"
 
+# load plugins included with muzak
 Dir.glob(File.join(__dir__, "plugin/*")) { |file| require_relative file }
 
 module Muzak
   module Plugin
+    # load plugins included by the user
+    Dir.glob(File.join(USER_PLUGIN_DIR, "*")) { |file| require file }
+
     def self.plugin_classes
       constants.map(&Plugin.method(:const_get)).grep(Class)
     end

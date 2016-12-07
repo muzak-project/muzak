@@ -10,7 +10,7 @@ module Muzak
       meth.to_s.tr "_", "-"
     end
 
-    def self.humanize_commands!
+    def self.commands
       commands = instance_methods.map(&:to_s).reject { |m| m.start_with?("_") }
       commands.map { |c| c.tr "_", "-" }
     end

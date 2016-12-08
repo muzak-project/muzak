@@ -24,6 +24,14 @@ module Muzak
       @player.pause
     end
 
+    def toggle
+      if @player.playing?
+        @player.pause
+      else
+        @player.play
+      end
+    end
+
     def next
       @player.next_song
     end

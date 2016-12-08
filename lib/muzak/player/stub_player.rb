@@ -29,6 +29,10 @@ module Muzak
         debug "#pause"
       end
 
+      def playing?
+        debug "#playing?"
+      end
+
       def next_song
         debug "#next_song"
       end

@@ -71,7 +71,7 @@ module Muzak
     def jukebox(*args)
       count = args.shift || @config["jukebox-size"]
 
-      songs = @index.jukebox(count).map { |s| Song.new(s) }
+      songs = @index.jukebox(count.to_i).map { |s| Song.new(s) }
 
       songs.each { |s| @player.enqueue_song s }
     end

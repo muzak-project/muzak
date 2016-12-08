@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors = ["William Woodruff"]
   s.email = "william@tuffbizz.com"
   s.files = Dir["LICENSE", "README.md", "lib/**/*"]
-  s.executables = ["muzak", "muzakd"]
+  s.executables = ["muzak", "muzakd", "muzak-cmd"]
   s.required_ruby_version = ">= 2.3.0"
   s.homepage = "https://github.com/woodruffw/muzak"
   s.license = "MIT"

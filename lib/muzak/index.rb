@@ -69,6 +69,12 @@ module Muzak
       end
     end
 
+    def jukebox(count = 50)
+      @all_albums ||= @hash["artists"].map { |_, a| a["albums"] }.flatten
+      @all_songs ||= @all_albums.map { |aa| aa.map { |_, a| a["songs"] } }.flatten
+      @all_songs.sample(count)
+    end
+
     def songs_by(artist)
       error "no such artist: '#{artist}'" unless @hash["artists"].key?(artist)
 

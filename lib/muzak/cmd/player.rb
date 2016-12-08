@@ -68,6 +68,14 @@ module Muzak
       @player.enqueue_album album
     end
 
+    def jukebox(*args)
+      count = args.shift || @config["jukebox-size"]
+
+      songs = @index.jukebox(count).map { |s| Song.new(s) }
+
+      songs.each { |s| @player.enqueue_song s }
+    end
+
     def list_queue
       puts @player.list_queue.map(&:title)
     end

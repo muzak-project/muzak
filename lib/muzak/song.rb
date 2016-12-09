@@ -11,7 +11,7 @@ module Muzak
 
       TagLib::FileRef.open(path) do |ref|
         break if ref.null?
-        @title = ref.tag.title || File.basename(path, File.extname(path))
+        @title = ref.tag.title
         @artist = ref.tag.artist
         @album = ref.tag.album
         @year = ref.tag.year
@@ -20,6 +20,10 @@ module Muzak
         @comment = ref.tag.comment
         @length = ref.audio_properties.length
       end
+
+      # provide some sane fallbacks
+      @title ||= File.basename(path, File.extname(path))
+      @track ||= 0 # we'll need to sort by track number
     end
 
     def best_guess_album_art

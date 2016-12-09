@@ -18,7 +18,7 @@ module Muzak
     end
 
     def index_load
-      debug "loading index from #{INDEX_FILE}"
+      verbose "loading index from #{INDEX_FILE}"
 
       @index = Index.load_index(INDEX_FILE)
 
@@ -33,7 +33,9 @@ module Muzak
     def index_build(*args)
       warn_arity(args, 0)
 
-      @index = Index.new(@config["music"])
+      verbose "building a new index, this may take a while"
+
+      @index = Index.new(@config["music"], deep: !!@config["deep-index"])
       _index_sync
     end
 

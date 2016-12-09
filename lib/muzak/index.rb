@@ -10,10 +10,11 @@ module Muzak
       instance
     end
 
-    def initialize(tree)
+    def initialize(tree, deep: false)
       @hash = {
         "timestamp" => Time.now.to_i,
-        "artists" => {}
+        "artists" => {},
+        "deep" => deep
       }
 
       Dir.entries(tree).each do |artist|
@@ -28,15 +29,25 @@ module Muzak
 
           @hash["artists"][artist]["albums"][album] = {}
           @hash["artists"][artist]["albums"][album]["songs"] = []
+          @hash["artists"][artist]["albums"][album]["deep-songs"] = []
 
           Dir.glob(File.join(tree, artist, album, "**")) do |file|
             @hash["artists"][artist]["albums"][album]["cover"] = file if album_art?(file)
-            @hash["artists"][artist]["albums"][album]["songs"] << file if music?(file)
+
+            if music?(file)
+              @hash["artists"][artist]["albums"][album]["songs"] << file
+              @hash["artists"][artist]["albums"][album]["deep-songs"] << Song.new(file)
+            end
           end
 
           @hash["artists"][artist]["albums"][album]["songs"].sort!
+          @hash["artists"][artist]["albums"][album]["deep-songs"].sort_by!(&:track)
         end
       end
+    end
+
+    def deep?
+      !!@hash["deep"]
     end
 
     def artists
@@ -62,11 +73,7 @@ module Muzak
     def albums_by(artist)
       error "no such artist: '#{artist}'" unless @hash["artists"].key?(artist)
 
-      begin
-        @hash["artists"][artist]["albums"]
-      rescue Exception => e
-        {}
-      end
+      @hash["artists"][artist]["albums"] rescue {}
     end
 
     def jukebox(count = 50)

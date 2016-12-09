@@ -21,7 +21,8 @@ module Muzak
       @config = {
         "music" => File.expand_path("~/music"),
         "player" => "mpv",
-        "index-autobuild" => 86400
+        "index-autobuild" => 86400,
+        "deep-index" => false
       }
 
       Dir.mkdir(CONFIG_DIR) unless Dir.exist?(CONFIG_DIR)

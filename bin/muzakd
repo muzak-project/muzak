@@ -21,7 +21,7 @@ File.open(fifo_path, "r") do |fifo|
   loop do
     cmd_argv = Shellwords.split(fifo.readline) rescue next
     next if cmd_argv.empty? || cmd_argv.any?(&:empty?)
-    muzak.send Muzak::Cmd.resolve_command(cmd_argv.shift), *cmd_argv
+    muzak.command cmd_argv.shift, *cmd_argv
   end
 end
 

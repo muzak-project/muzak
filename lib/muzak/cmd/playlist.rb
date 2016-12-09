@@ -67,10 +67,8 @@ module Muzak
       album_name = args.join(" ")
       return if album_name.nil?
 
-      album_hash = @index.albums[album_name]
-      return if album_hash.nil?
-
-      album = Album.new(album_name, album_hash)
+      album = @index.albums[album_name]
+      return if album.nil?
 
       album.songs.each { |song| @playlist.add song }
 

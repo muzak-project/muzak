@@ -58,8 +58,8 @@ module Muzak
       albums_hash = {}
 
       artists.each do |a|
-        @hash["artists"][a]["albums"].keys.each do |ak|
-          albums_hash[ak] = @hash["artists"][a]["albums"][ak]
+        @hash["artists"][a]["albums"].each do |title, album_hash|
+          albums_hash[title] = Album.new(title, album_hash)
         end
       end
 
@@ -73,21 +73,27 @@ module Muzak
     def albums_by(artist)
       error "no such artist: '#{artist}'" unless @hash["artists"].key?(artist)
 
-      @hash["artists"][artist]["albums"] rescue {}
+      @hash["artists"][artist]["albums"].map { |title, album| Album.new(title, album) }
     end
 
     def jukebox(count = 50)
       @all_albums ||= @hash["artists"].map { |_, a| a["albums"] }.flatten
-      @all_songs ||= @all_albums.map { |aa| aa.map { |_, a| a["songs"] } }.flatten
-      @all_songs.sample(count)
+
+      if deep?
+        @all_deep_songs ||= @all_albums.map { |aa| aa.map { |_, a| a["deep-songs"] } }.flatten
+        @all_deep_songs.sample(count)
+      else
+        @all_songs ||= @all_albums.map { |aa| aa.map { |_, a| a["songs"] } }.flatten
+        @all_songs.sample(count).map { |s| Song.new(s) }
+      end
     end
 
     def songs_by(artist)
       error "no such artist: '#{artist}'" unless @hash["artists"].key?(artist)
 
       begin
-        albums_by(artist).map do |_, album|
-          album["songs"].map { |s| File.basename(s) }.sort
+        albums_by(artist).map do |album|
+          album.songs
         end.flatten
       rescue Exception => e
         []

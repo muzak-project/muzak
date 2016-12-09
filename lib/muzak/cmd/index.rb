@@ -61,7 +61,7 @@ module Muzak
       artist = args.join(" ")
       return if artist.nil?
 
-      puts @index.albums_by(artist).keys
+      puts @index.albums_by(artist).map(&:title)
     end
 
     def songs_by_artist(*args)
@@ -70,7 +70,7 @@ module Muzak
       artist = args.join(" ")
       return if artist.nil?
 
-      puts @index.songs_by(artist)
+      puts @index.songs_by(artist).map(&:title)
     end
   end
 end

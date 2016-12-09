@@ -44,12 +44,8 @@ module Muzak
       artist = args.join(" ")
       return if artist.nil?
 
-      album_hashes = @index.albums_by(artist)
-      return if album_hashes.empty?
-
-      albums = album_hashes.map do |album_name, album_hash|
-        Album.new(album_name, album_hash)
-      end
+      albums = @index.albums_by(artist)
+      return if albums.empty?
 
       albums.each do |album|
         @player.enqueue_album album
@@ -60,10 +56,10 @@ module Muzak
       album_name = args.join(" ")
       return if album_name.nil?
 
-      album_hash = @index.albums[album_name]
-      return if album_hash.nil?
-
-      album = Album.new(album_name, album_hash)
+      debug album_name
+      album = @index.albums[album_name]
+      debug album.to_s
+      return if album.nil?
 
       @player.enqueue_album album
     end
@@ -71,7 +67,7 @@ module Muzak
     def jukebox(*args)
       count = args.shift || @config["jukebox-size"]
 
-      songs = @index.jukebox(count.to_i).map { |s| Song.new(s) }
+      songs = @index.jukebox(count.to_i)
 
       songs.each { |s| @player.enqueue_song s }
     end

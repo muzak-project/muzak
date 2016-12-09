@@ -89,6 +89,8 @@ module Muzak
     end
 
     def now_playing
+      return unless @player.playing?
+
       info @player.now_playing.full_title
     end
   end

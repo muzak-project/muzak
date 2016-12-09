@@ -130,14 +130,20 @@ module Muzak
       end
 
       def shuffle_queue
+        return unless running?
+
         command "playlist-shuffle"
       end
 
       def clear_queue
+        return unless running?
+
         command "playlist-clear"
       end
 
       def now_playing
+        return unless running? && playing?
+
         Song.new(get_property "path")
       end
 

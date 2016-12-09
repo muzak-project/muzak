@@ -31,7 +31,7 @@ module Muzak
           "--input-ipc-server=%{socket}" % { socket: @sock_path }
         ]
 
-        mpv_args << "--autofit=#{instance.config["art-geometry"]}" if instance.config["art-geometry"]
+        mpv_args << "--geometry=#{instance.config["art-geometry"]}" if instance.config["art-geometry"]
 
         @pid = Process.spawn("mpv", *mpv_args)
 

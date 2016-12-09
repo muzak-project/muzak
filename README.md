@@ -33,7 +33,6 @@ $ ruby -Ilib bin/muzak-cmd "command"
 ### TODO
 
 * GUI "frontend"?
-* optional "deep" index containing ID3 tags
 * isolation of art and music output (`Muzak::ArtProvider`?)
 * current indexing/sorting logic is terrible
 * all the documentation

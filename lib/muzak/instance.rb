@@ -3,6 +3,10 @@ module Muzak
     include Cmd
     include Utils
 
+    def command(cmd, *args)
+      send Cmd.resolve_command(cmd), *args
+    end
+
     def method_missing(meth, *args)
       warn "unknown command: #{Cmd.resolve_method(meth)}"
       help

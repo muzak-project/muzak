@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+require "muzak"
+
+def fatal(msg)
+  puts "Fatal: #{msg}"
+  exit 1
+end
+
+def dmenu(options)
+	opts = options.join("\n")
+	`printf "#{opts}" | dmenu`
+end
+
+fifo_path = File.join(Muzak::CONFIG_DIR, "muzak.fifo")
+
+fatal "Is muzakd running?" unless File.exist?(fifo_path)
+
+command = dmenu Muzak::Cmd.commands
+
+File.open(fifo_path, "w") do |io|
+  io.puts command unless command.empty?
+end

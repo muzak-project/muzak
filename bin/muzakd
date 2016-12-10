@@ -21,11 +21,10 @@ File.open(fifo_path, "r") do |fifo|
   loop do
     cmd_argv = Shellwords.split(fifo.readline) rescue next
     next if cmd_argv.empty? || cmd_argv.any?(&:empty?)
-    muzak.command cmd_argv.shift, *cmd_argv
+    cmd = cmd_argv.shift
+    muzak.command cmd, *cmd_argv
+    break if cmd == "quit"
   end
 end
 
-# there is definitely a cleaner way to do this.
-at_exit do
-  File.delete(fifo_path) if File.exist?(fifo_path)
-end
+File.delete(fifo_path) if File.exist?(fifo_path)

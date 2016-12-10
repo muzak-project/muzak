@@ -45,5 +45,7 @@ trap("INT", "SIG_IGN")
 while line = Readline.readline("muzak> ", true)
   cmd_argv = Shellwords.split(line) rescue next
   next if cmd_argv.empty? || cmd_argv.any?(&:empty?)
-  muzak.command cmd_argv.shift, *cmd_argv
+  cmd = cmd_argv.shift
+  muzak.command cmd, *cmd_argv
+  break if cmd == "quit"
 end

@@ -13,7 +13,6 @@ module Muzak
     def quit
       debug "muzak is quitting..."
       @player.deactivate!
-      exit
     end
   end
 end

@@ -17,7 +17,7 @@ fifo_path = File.join(Muzak::CONFIG_DIR, "muzak.fifo")
 File.delete(fifo_path) if File.exist?(fifo_path) # just in case a previous session died
 File.mkfifo(fifo_path)
 
-File.open(fifo_path, "r") do |fifo|
+File.open(fifo_path, "r+") do |fifo|
   loop do
     cmd_argv = Shellwords.split(fifo.readline) rescue next
     next if cmd_argv.empty? || cmd_argv.any?(&:empty?)

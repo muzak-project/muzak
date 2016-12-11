@@ -155,7 +155,7 @@ module Muzak
 
       def load_song(song, art)
         cmds = ["loadfile", song.path, "append-play"]
-        cmds << "external-file=#{art}" if art
+        cmds << "external-file=\"#{art}\"" if art
         command *cmds
       end
 

@@ -22,6 +22,10 @@ module Muzak
         @sock_path = Dir::Tmpname.make_tmpname("/tmp/mpv", ".sock")
         mpv_args = [
           "--idle",
+          # if i get around to separating album art from playback,
+          # these two flags disable mpv's video output entirely
+          # "--no-force-window",
+          # "--no-video",
           "--no-osc",
           "--no-osd-bar",
           "--no-input-default-bindings",

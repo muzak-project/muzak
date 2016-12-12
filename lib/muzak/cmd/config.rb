@@ -22,7 +22,8 @@ module Muzak
         "music" => File.expand_path("~/music"),
         "player" => "mpv",
         "index-autobuild" => 86400,
-        "deep-index" => false
+        "deep-index" => false,
+        "jukebox-size" => 100
       }
 
       Dir.mkdir(CONFIG_DIR) unless Dir.exist?(CONFIG_DIR)

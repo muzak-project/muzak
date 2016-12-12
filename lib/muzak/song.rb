@@ -22,7 +22,7 @@ module Muzak
       end
 
       # provide some sane fallbacks
-      @title ||= File.basename(path, File.extname(path))
+      @title ||= File.basename(path, File.extname(path)) rescue ""
       @track ||= 0 # we'll need to sort by track number
     end
 

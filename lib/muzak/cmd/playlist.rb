@@ -49,6 +49,15 @@ module Muzak
       @playlist.add(album.songs)
     end
 
+    def playlist_add_artist(*args)
+      return unless _playlist_loaded?
+
+      artist = args.join(" ")
+      return if artist.nil?
+
+      @playlist.add(@index.songs_by(artist))
+    end
+
     def playlist_add_current(*args)
       return unless @player.running? && _playlist_loaded?
 

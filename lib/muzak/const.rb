@@ -6,6 +6,7 @@ module Muzak
   INDEX_FILE = File.join(CONFIG_DIR, "index.yml").freeze
   PLAYLIST_DIR = File.join(CONFIG_DIR, "playlists").freeze
   USER_PLUGIN_DIR = File.join(CONFIG_DIR, "plugins").freeze
+  USER_COMMAND_DIR = File.join(CONFIG_DIR, "commands").freeze
 
   PLUGIN_EVENTS = [
     :player_activated,

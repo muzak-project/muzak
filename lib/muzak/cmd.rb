@@ -2,6 +2,9 @@ Dir.glob(File.join(__dir__, "cmd/*")) { |f| require_relative f }
 
 module Muzak
   module Cmd
+    # load commands included by the user
+    Dir.glob(File.join(USER_COMMAND_DIR, "*")) { |file| require file }
+
     def self.resolve_command(cmd)
       cmd.tr "-", "_"
     end

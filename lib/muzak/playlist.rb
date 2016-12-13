@@ -1,6 +1,18 @@
 module Muzak
   class Playlist
-    attr_accessor :name, :songs
+    attr_accessor :filename, :songs
+
+    def self.path_for(pname)
+      File.join(PLAYLIST_DIR, pname) + ".yml"
+    end
+
+    def self.exist?(pname)
+      File.exist?(path_for(pname))
+    end
+
+    def self.delete!(pname)
+      File.delete(path_for(pname)) if exist? pname
+    end
 
     def self.playlist_names
       Dir.entries(PLAYLIST_DIR).reject do |ent|
@@ -10,36 +22,47 @@ module Muzak
       end
     end
 
-    def self.load_playlist(path)
-      instance = allocate
-      playlist_hash = YAML.load_file(path)
+    def initialize(pname)
+      @filename = self.class.path_for pname
 
-      instance.name = File.basename(path, File.extname(path))
-      instance.songs = playlist_hash["songs"]
-
-      instance
+      if File.exist?(@filename)
+        phash = YAML.load_file(@filename)
+        @songs = phash["songs"]
+      else
+        @songs = []
+      end
     end
 
-    def initialize(name, songs)
-      @name = name
-      @songs = songs
+    def name
+      File.basename(@filename, File.extname(@filename))
     end
 
-    def add(song)
-      return if @songs.include?(song)
-      @songs << song
+    def add(songs)
+      # coerce a single song into an array
+      [*songs].each do |song|
+        next if @songs.include?(song)
+        @songs << song
+      end
+
+      sync!
     end
 
-    def delete(song)
-      @songs.delete(song)
+    def delete(songs)
+      [*songs].each { |song| @songs.delete(song) }
+
+      sync!
     end
 
     def shuffle!
       @songs.shuffle!
     end
 
+    def sync!
+      File.open(@filename, "w") { |io| io.write to_hash.to_yaml }
+    end
+
     def to_hash
-      { "songs" => songs }
+      { "songs" => @songs }
     end
   end
 end

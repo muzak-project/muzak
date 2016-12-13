@@ -1,18 +1,10 @@
 module Muzak
   module Cmd
-    def _playlist_file(pname)
-      File.join(PLAYLIST_DIR, pname) + ".yml"
-    end
-
-    def _playlist_available?(pname)
-      File.exist?(_playlist_file(pname))
-    end
-
     def _playlist_loaded?
       !!@playlist
     end
 
-    def list_playlists
+    def list_playlists(*args)
       Playlist.playlist_names.each do |playlist|
         info playlist
       end
@@ -22,14 +14,8 @@ module Muzak
       fail_arity(args, 1)
       pname = args.shift
 
-      if _playlist_available?(pname)
-        info "loading playlist '#{pname}'"
-        @playlist = Playlist.load_playlist(_playlist_file(pname))
-      else
-        info "creating playlist '#{pname}'"
-        @playlist = Playlist.new(pname, [])
-        playlist_sync
-      end
+      info "loading playlist '#{pname}'"
+      @playlist = Playlist.new(pname)
 
       event :playlist_loaded, @playlist
     end
@@ -40,21 +26,11 @@ module Muzak
 
       debug "deleting playist '#{pname}'"
 
-      File.delete(_playlist_file(pname)) if _playlist_available?(pname)
+      Playlist.delete!(pname)
       @playlist = nil
     end
 
-    def playlist_sync(*args)
-      return unless _playlist_loaded?
-      fail_arity(args, 0)
-
-      debug "syncing playlist '#{@playlist.name}'"
-
-      Dir.mkdir(PLAYLIST_DIR) unless Dir.exist?(PLAYLIST_DIR)
-      File.open(_playlist_file(@playlist.name), "w") { |io| io.write @playlist.to_hash.to_yaml }
-    end
-
-    def enqueue_playlist
+    def enqueue_playlist(*args)
       return unless _playlist_loaded?
 
       @player.enqueue_playlist(@playlist)
@@ -70,33 +46,25 @@ module Muzak
       album = @index.albums[album_name]
       return if album.nil?
 
-      album.songs.each { |song| @playlist.add song }
-
-      playlist_sync
+      @playlist.add(album.songs)
     end
 
-    def playlist_add_current
+    def playlist_add_current(*args)
       return unless @player.running? && _playlist_loaded?
 
       @playlist.add @player.now_playing
-
-      playlist_sync
     end
 
-    def playlist_del_current
+    def playlist_del_current(*args)
       return unless @player.running? && _playlist_loaded?
 
-      @playlist.delete(@player.now_playing)
-
-      playlist_sync
+      @playlist.delete @player.now_playing
     end
 
-    def playlist_shuffle
+    def playlist_shuffle(*args)
       return unless _playlist_loaded?
 
       @playlist.shuffle!
-
-      playlist_sync
     end
   end
 end

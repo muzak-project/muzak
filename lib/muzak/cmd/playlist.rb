@@ -91,7 +91,10 @@ module Muzak
     def playlist_shuffle(*args)
       return unless _playlists_loaded?
 
-      @playlist.shuffle!
+      pname = args.shift
+      return if pname.nil?
+
+      @playlists[pname].shuffle!
     end
   end
 end

@@ -1,7 +1,7 @@
 module Muzak
   module Cmd
-    def _playlist_loaded?
-      !!@playlist
+    def _playlists_loaded?
+      !!@playlists
     end
 
     def list_playlists(*args)
@@ -10,14 +10,18 @@ module Muzak
       end
     end
 
-    def playlist_load(*args)
-      fail_arity(args, 1)
-      pname = args.shift
+    def playlists_load(*args)
+      # fail_arity(args, 1)
+      # pname = args.shift
+      @playlists = {}
+      @playlists.default_proc = proc { |h, k| h[k] = Playlist.new(k) }
 
-      info "loading playlist '#{pname}'"
-      @playlist = Playlist.new(pname)
+      Playlist.playlist_names.each do |pname|
+        debug "loading playlist '#{pname}'"
+        @playlists[pname] = Playlist.new(pname)
+      end
 
-      event :playlist_loaded, @playlist
+      event :playlists_loaded, @playlist
     end
 
     def playlist_delete(*args)
@@ -27,18 +31,23 @@ module Muzak
       debug "deleting playist '#{pname}'"
 
       Playlist.delete!(pname)
-      @playlist = nil
+      @playlist[pname] = nil
     end
 
     def enqueue_playlist(*args)
-      return unless _playlist_loaded?
+      return unless _playlists_loaded?
+      fail_arity(args, 1)
+      pname = args.shift
 
-      @player.enqueue_playlist(@playlist)
-      event :playlist_enqueued, @playlist
+      @player.enqueue_playlist(@playlists[pname])
+      event :playlist_enqueued, @playlists[pname]
     end
 
     def playlist_add_album(*args)
-      return unless _playlist_loaded?
+      return unless _playlists_loaded?
+
+      pname = args.shift
+      return if pname.nil?
 
       album_name = args.join(" ")
       return if album_name.nil?
@@ -46,32 +55,41 @@ module Muzak
       album = @index.albums[album_name]
       return if album.nil?
 
-      @playlist.add(album.songs)
+      @playlists[pname].add(album.songs)
     end
 
     def playlist_add_artist(*args)
-      return unless _playlist_loaded?
+      return unless _playlists_loaded?
+
+      pname = args.shift
+      return if pname.nil?
 
       artist = args.join(" ")
       return if artist.nil?
 
-      @playlist.add(@index.songs_by(artist))
+      @playlists[pname].add(@index.songs_by(artist))
     end
 
     def playlist_add_current(*args)
-      return unless @player.running? && _playlist_loaded?
+      return unless @player.running? && _playlists_loaded?
 
-      @playlist.add @player.now_playing
+      pname = args.shift
+      return if pname.nil?
+
+      @playlists[pname].add @player.now_playing
     end
 
     def playlist_del_current(*args)
-      return unless @player.running? && _playlist_loaded?
+      return unless @player.running? && _playlists_loaded?
 
-      @playlist.delete @player.now_playing
+      pname = args.shift
+      return if pname.nil?
+
+      @playlists[pname].delete @player.now_playing
     end
 
     def playlist_shuffle(*args)
-      return unless _playlist_loaded?
+      return unless _playlists_loaded?
 
       @playlist.shuffle!
     end

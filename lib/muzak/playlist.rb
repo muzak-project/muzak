@@ -31,6 +31,8 @@ module Muzak
       else
         @songs = []
       end
+
+      sync!
     end
 
     def name

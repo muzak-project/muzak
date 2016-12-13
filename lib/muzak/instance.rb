@@ -30,8 +30,8 @@ module Muzak
 
       @plugins = initialize_plugins!
 
-      playlist_load @config["default-playlist"] if @config["default-playlist"]
-      enqueue_playlist if _playlist_loaded? && @config["autoplay"]
+      playlists_load
+      enqueue_playlist @config["autoplay"] if @config["autoplay"]
     end
 
     def initialize_plugins!

@@ -11,27 +11,27 @@ module Muzak
     def list_artists(*args)
       warn_arity(args, 0)
 
-      puts @index.artists.join("\n")
+      puts index.artists.join("\n")
     end
 
     def list_albums(*args)
       warn_arity(args, 0)
 
-      puts @index.album_names.join("\n")
+      puts index.album_names.join("\n")
     end
 
     def albums_by_artist(*args)
       artist = args.join(" ")
       return if artist.nil?
 
-      puts @index.albums_by(artist).map(&:title)
+      puts index.albums_by(artist).map(&:title)
     end
 
     def songs_by_artist(*args)
       artist = args.join(" ")
       return if artist.nil?
 
-      puts @index.songs_by(artist).map(&:title)
+      puts index.songs_by(artist).map(&:title)
     end
   end
 end

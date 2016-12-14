@@ -12,7 +12,7 @@ module Muzak
 
     def quit
       verbose "muzak is quitting..."
-      @player.deactivate!
+      player.deactivate!
     end
   end
 end

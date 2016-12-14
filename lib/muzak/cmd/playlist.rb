@@ -1,7 +1,7 @@
 module Muzak
   module Cmd
     def _playlists_loaded?
-      !!@playlists
+      !!playlists
     end
 
     def list_playlists(*args)
@@ -17,7 +17,7 @@ module Muzak
       debug "deleting playist '#{pname}'"
 
       Playlist.delete!(pname)
-      @playlist[pname] = nil
+      playlists[pname] = nil
     end
 
     def enqueue_playlist(*args)
@@ -25,8 +25,8 @@ module Muzak
       fail_arity(args, 1)
       pname = args.shift
 
-      @player.enqueue_playlist(@playlists[pname])
-      event :playlist_enqueued, @playlists[pname]
+      player.enqueue_playlist(playlists[pname])
+      event :playlist_enqueued, playlists[pname]
     end
 
     def playlist_add_album(*args)
@@ -38,10 +38,10 @@ module Muzak
       album_name = args.join(" ")
       return if album_name.nil?
 
-      album = @index.albums[album_name]
+      album = index.albums[album_name]
       return if album.nil?
 
-      @playlists[pname].add(album.songs)
+      playlists[pname].add(album.songs)
     end
 
     def playlist_add_artist(*args)
@@ -53,25 +53,25 @@ module Muzak
       artist = args.join(" ")
       return if artist.nil?
 
-      @playlists[pname].add(@index.songs_by(artist))
+      playlists[pname].add(index.songs_by(artist))
     end
 
     def playlist_add_current(*args)
-      return unless @player.running? && _playlists_loaded?
+      return unless player.running? && _playlists_loaded?
 
       pname = args.shift
       return if pname.nil?
 
-      @playlists[pname].add @player.now_playing
+      playlists[pname].add player.now_playing
     end
 
     def playlist_del_current(*args)
-      return unless @player.running? && _playlists_loaded?
+      return unless player.running? && _playlists_loaded?
 
       pname = args.shift
       return if pname.nil?
 
-      @playlists[pname].delete @player.now_playing
+      playlists[pname].delete player.now_playing
     end
 
     def playlist_shuffle(*args)
@@ -80,7 +80,7 @@ module Muzak
       pname = args.shift
       return if pname.nil?
 
-      @playlists[pname].shuffle!
+      playlists[pname].shuffle!
     end
   end
 end

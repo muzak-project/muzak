@@ -1,9 +1,12 @@
 module Muzak
   class Index
     include Utils
-    attr_accessor :hash
+    attr_accessor :tree, :deep, :hash
 
     def initialize(tree, deep: false)
+      @tree = tree
+      @deep = deep
+
       if File.exist?(INDEX_FILE)
         verbose "loading index from #{INDEX_FILE}"
         @hash = YAML::load_file(INDEX_FILE)
@@ -20,7 +23,7 @@ module Muzak
     end
 
     def deep?
-      !!@hash["deep"]
+      deep
     end
 
     def timestamp

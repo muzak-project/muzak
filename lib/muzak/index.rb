@@ -50,6 +50,10 @@ module Muzak
       !!@hash["deep"]
     end
 
+    def timestamp
+      @hash["timestamp"]
+    end
+
     def artists
       @hash["artists"].keys
     end

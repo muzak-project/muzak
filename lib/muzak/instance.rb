@@ -20,22 +20,21 @@ module Muzak
 
       debug "muzak is starting..."
 
-      _config_init unless _config_available?
-      config_load
+      Config.load!
 
       index_build unless _index_available?
       index_load
 
-      @player = Player::PLAYER_MAP[@config["player"]].new(self)
+      @player = Player::PLAYER_MAP[Config.player].new(self)
 
       @plugins = initialize_plugins!
 
       playlists_load
-      enqueue_playlist @config["autoplay"] if @config["autoplay"]
+      enqueue_playlist Config.autoplay if Config.autoplay
     end
 
     def initialize_plugins!
-      pks = Plugin.plugin_classes.select { |pk| _config_plugin? pk.plugin_name }
+      pks = Plugin.plugin_classes.select { |pk| Config.plugin? pk.plugin_name }
       pks.map { |pk| pk.new(self) }
     end
 

@@ -65,7 +65,7 @@ module Muzak
     end
 
     def jukebox(*args)
-      count = args.shift || @config["jukebox-size"]
+      count = args.shift || Config.jukebox_size
 
       songs = @index.jukebox(count.to_i)
 

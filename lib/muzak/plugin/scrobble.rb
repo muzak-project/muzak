@@ -8,7 +8,7 @@ module Muzak
 
       def initialize(instance)
         super
-        @username, @password_hash = instance.config["plugin-scrobble"].split(":")
+        @username, @password_hash = Config.plugin_scrobble.split(":")
       end
 
       def song_loaded(song)

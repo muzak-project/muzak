@@ -9,7 +9,7 @@ module Muzak
     end
 
     def _index_outdated?
-      Time.now.to_i - @index["timestamp"] >= @config["index-autobuild"]
+      Time.now.to_i - @index.timestamp >= Config.index_autobuild
     end
 
     def _index_sync
@@ -22,9 +22,9 @@ module Muzak
 
       @index = Index.load_index(INDEX_FILE)
 
-      # the order is important here, since @config["index-autobuild"]
+      # the order is important here, since Config.index_autobuild
       # will short-circuit if index-autobuild isn't set
-      if @config["index-autobuild"] && _index_outdated?
+      if Config.index_autobuild && _index_outdated?
         verbose "rebuilding outdated index"
         index_build
       end
@@ -35,7 +35,7 @@ module Muzak
 
       verbose "building a new index, this may take a while"
 
-      @index = Index.new(@config["music"], deep: !!@config["deep-index"])
+      @index = Index.new(Config.music, deep: Config.deep_index)
       _index_sync
     end
 

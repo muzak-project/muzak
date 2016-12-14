@@ -1,5 +1,13 @@
 module Muzak
   module Utils
+    def self.resolve_command(cmd)
+      cmd.tr "-", "_"
+    end
+
+    def self.resolve_method(meth)
+      meth.to_s.tr "_", "-"
+    end
+
     def music?(filename)
       [".mp3", ".flac", ".m4a", ".wav", ".ogg", ".oga", ".opus"].include?(File.extname(filename))
     end

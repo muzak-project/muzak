@@ -7,7 +7,7 @@ module Muzak
       key = args.shift
       return if key.nil?
 
-      info "#{key}: #{Config.send Cmd.resolve_method(key)}"
+      info "#{key}: #{Config.send Utils.resolve_method(key)}"
     end
   end
 end

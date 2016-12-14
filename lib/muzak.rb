@@ -1,6 +1,6 @@
 require_relative "muzak/const"
-require_relative "muzak/config"
 require_relative "muzak/utils"
+require_relative "muzak/config"
 require_relative "muzak/plugin"
 require_relative "muzak/song"
 require_relative "muzak/album"

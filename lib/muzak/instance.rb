@@ -4,11 +4,11 @@ module Muzak
     include Utils
 
     def command(cmd, *args)
-      send Cmd.resolve_command(cmd), *args
+      send Utils.resolve_command(cmd), *args
     end
 
     def method_missing(meth, *args)
-      warn "unknown command: #{Cmd.resolve_method(meth)}"
+      warn "unknown command: #{Utils.resolve_method(meth)}"
       help
     end
 
@@ -19,8 +19,6 @@ module Muzak
       $verbose = opts[:verbose]
 
       debug "muzak is starting..."
-
-      Config.load!
 
       index_build unless _index_available?
       index_load

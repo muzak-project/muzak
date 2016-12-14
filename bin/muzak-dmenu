@@ -8,8 +8,9 @@ def fatal(msg)
 end
 
 def dmenu(options)
+	dmenu = Muzak::Config.dmenu_exec || "dmenu"
 	opts = options.join("\n")
-	`printf "#{opts}" | dmenu`
+	`printf "#{opts}" | #{dmenu}`
 end
 
 fifo_path = File.join(Muzak::CONFIG_DIR, "muzak.fifo")

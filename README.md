@@ -9,7 +9,7 @@ and the state of the player.
 
 ### Screenshot
 
-![screenshot](https://sr.ht/A-oS.png)
+![screenshot](https://sr.ht/V4mX.gif)
 
 ### Usage
 

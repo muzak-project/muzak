@@ -12,7 +12,6 @@ module Muzak
     :player_activated,
     :player_deactivated,
     :song_loaded,
-    :playlists_loaded,
     :playlist_enqueued
   ]
 end

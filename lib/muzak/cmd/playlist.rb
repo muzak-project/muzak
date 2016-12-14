@@ -10,20 +10,6 @@ module Muzak
       end
     end
 
-    def playlists_load(*args)
-      # fail_arity(args, 1)
-      # pname = args.shift
-      @playlists = {}
-      @playlists.default_proc = proc { |h, k| h[k] = Playlist.new(k) }
-
-      Playlist.playlist_names.each do |pname|
-        debug "loading playlist '#{pname}'"
-        @playlists[pname] = Playlist.new(pname)
-      end
-
-      event :playlists_loaded, @playlist
-    end
-
     def playlist_delete(*args)
       fail_arity(args, 1)
       pname = args.shift

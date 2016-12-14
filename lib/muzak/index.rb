@@ -3,47 +3,20 @@ module Muzak
     include Utils
     attr_accessor :hash
 
-    def self.load_index(file)
-      instance = allocate
-      instance.hash = YAML::load_file(file)
+    def initialize(tree, deep: false)
+      if File.exist?(INDEX_FILE)
+        verbose "loading index from #{INDEX_FILE}"
+        @hash = YAML::load_file(INDEX_FILE)
+        return unless outdated?
+      end
 
-      instance
+      build!
     end
 
-    def initialize(tree, deep: false)
-      @hash = {
-        "timestamp" => Time.now.to_i,
-        "artists" => {},
-        "deep" => deep
-      }
+    def build!
+      @hash = build_index_hash!
 
-      Dir.entries(tree).each do |artist|
-        next unless File.directory?(File.join(tree, artist))
-        next if artist.start_with?(".")
-
-        @hash["artists"][artist] = {}
-        @hash["artists"][artist]["albums"] = {}
-
-        Dir.entries(File.join(tree, artist)).each do |album|
-          next if album.start_with?(".")
-
-          @hash["artists"][artist]["albums"][album] = {}
-          @hash["artists"][artist]["albums"][album]["songs"] = []
-          @hash["artists"][artist]["albums"][album]["deep-songs"] = []
-
-          Dir.glob(File.join(tree, artist, album, "**")) do |file|
-            @hash["artists"][artist]["albums"][album]["cover"] = file if album_art?(file)
-
-            if music?(file)
-              @hash["artists"][artist]["albums"][album]["songs"] << file
-              @hash["artists"][artist]["albums"][album]["deep-songs"] << Song.new(file)
-            end
-          end
-
-          @hash["artists"][artist]["albums"][album]["songs"].sort!
-          @hash["artists"][artist]["albums"][album]["deep-songs"].sort_by!(&:track)
-        end
-      end
+      File.open(INDEX_FILE, "w") { |io| io.write @hash.to_yaml }
     end
 
     def deep?
@@ -52,6 +25,10 @@ module Muzak
 
     def timestamp
       @hash["timestamp"]
+    end
+
+    def outdated?
+      Time.now.to_i - timestamp >= Config.index_autobuild
     end
 
     def artists
@@ -102,6 +79,46 @@ module Muzak
       rescue Exception => e
         []
       end
+    end
+
+    private
+
+    def build_index_hash!
+      index_hash = {
+        "timestamp" => Time.now.to_i,
+        "artists" => {},
+        "deep" => deep
+      }
+
+      Dir.entries(tree).each do |artist|
+        next unless File.directory?(File.join(tree, artist))
+        next if artist.start_with?(".")
+
+        index_hash["artists"][artist] = {}
+        index_hash["artists"][artist]["albums"] = {}
+
+        Dir.entries(File.join(tree, artist)).each do |album|
+          next if album.start_with?(".")
+
+          index_hash["artists"][artist]["albums"][album] = {}
+          index_hash["artists"][artist]["albums"][album]["songs"] = []
+          index_hash["artists"][artist]["albums"][album]["deep-songs"] = []
+
+          Dir.glob(File.join(tree, artist, album, "**")) do |file|
+            index_hash["artists"][artist]["albums"][album]["cover"] = file if album_art?(file)
+
+            if music?(file)
+              index_hash["artists"][artist]["albums"][album]["songs"] << file
+              index_hash["artists"][artist]["albums"][album]["deep-songs"] << Song.new(file)
+            end
+          end
+
+          index_hash["artists"][artist]["albums"][album]["songs"].sort!
+          index_hash["artists"][artist]["albums"][album]["deep-songs"].sort_by!(&:track)
+        end
+      end
+
+      index_hash
     end
   end
 end

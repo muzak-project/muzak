@@ -22,6 +22,17 @@ module Muzak
       end
     end
 
+    def self.load_playlists!
+      playlists = {}
+      playlists.default_proc = proc { |h, k| h[k] = Playlist.new(k) }
+
+      playlist_names.each do |pname|
+        playlists[pname] = Playlist.new(pname)
+      end
+
+      playlists
+    end
+
     def initialize(pname)
       @filename = self.class.path_for pname
 

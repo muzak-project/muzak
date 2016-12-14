@@ -12,34 +12,29 @@ module Muzak
       help
     end
 
-    attr_reader :config, :player, :index, :playlist
+    attr_reader :index, :player, :plugins, :playlists
 
     def initialize(opts = {})
       $debug = opts[:debug]
       $verbose = opts[:verbose]
 
-      debug "muzak is starting..."
+      verbose "muzak is starting..."
 
-      index_build unless _index_available?
-      index_load
+      @index = Index.new(Config.music, deep: Config.deep_index)
 
       @player = Player::PLAYER_MAP[Config.player].new(self)
 
-      @plugins = initialize_plugins!
+      @plugins = Plugin.load_plugins!
 
-      playlists_load
+      @playlists = Playlist.load_playlists!
+
       enqueue_playlist Config.autoplay if Config.autoplay
-    end
-
-    def initialize_plugins!
-      pks = Plugin.plugin_classes.select { |pk| Config.plugin? pk.plugin_name }
-      pks.map { |pk| pk.new(self) }
     end
 
     def event(type, *args)
       return unless PLUGIN_EVENTS.include?(type)
 
-      @plugins.each do |plugin|
+      plugins.each do |plugin|
         Thread.new do
           plugin.send(type, *args)
         end.join

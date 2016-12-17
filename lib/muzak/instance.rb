@@ -37,7 +37,7 @@ module Muzak
       plugins.each do |plugin|
         Thread.new do
           plugin.send(type, *args)
-        end.join
+        end
       end
     end
   end

@@ -9,7 +9,7 @@ module Muzak
     end
 
     def music?(filename)
-      [".mp3", ".flac", ".m4a", ".wav", ".ogg", ".oga", ".opus"].include?(File.extname(filename))
+      [".mp3", ".flac", ".m4a", ".wav", ".ogg", ".oga", ".opus"].include?(File.extname(filename.downcase))
     end
 
     def album_art?(filename)

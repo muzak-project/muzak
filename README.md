@@ -37,4 +37,3 @@ $ ruby -Ilib bin/muzak-cmd "command"
 * current indexing/sorting logic is terrible
 * all the documentation
 * readline's tab complete is terrible with spaces (maybe use `bond`?)
-* replace YAML index with a more space/time efficient format (JSON, msgpack, Marshal?)

@@ -9,7 +9,7 @@ module Muzak
 
       if File.exist?(INDEX_FILE)
         verbose "loading index from #{INDEX_FILE}"
-        @hash = YAML::load_file(INDEX_FILE)
+        @hash = Marshal::load(File.read INDEX_FILE)
         return unless outdated?
       end
 
@@ -19,7 +19,9 @@ module Muzak
     def build!
       @hash = build_index_hash!
 
-      File.open(INDEX_FILE, "w") { |io| io.write @hash.to_yaml }
+      debug "indexed #{albums.length} albums by #{artists.length} artists"
+
+      File.open(INDEX_FILE, "w") { |io| io.write Marshal::dump @hash }
     end
 
     def deep?
@@ -35,19 +37,21 @@ module Muzak
     end
 
     def artists
-      @hash["artists"].keys
+      @artists ||= @hash["artists"].keys
     end
 
     def albums
-      albums_hash = {}
+      @albums_hash ||= begin
+        albums_hash = {}
 
-      artists.each do |a|
-        @hash["artists"][a]["albums"].each do |title, album_hash|
-          albums_hash[title] = Album.new(title, album_hash)
+        artists.each do |a|
+          @hash["artists"][a]["albums"].each do |title, album_hash|
+            albums_hash[title] = Album.new(title, album_hash)
+          end
         end
-      end
 
-      albums_hash
+        albums_hash
+      end
     end
 
     def album_names

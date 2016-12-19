@@ -59,9 +59,12 @@ module Muzak
     end
 
     def albums_by(artist)
-      error "no such artist: '#{artist}'" unless @hash["artists"].key?(artist)
-
-      @hash["artists"][artist]["albums"].map { |title, album| Album.new(title, album) }
+      if artists.include?(artist)
+        @hash["artists"][artist]["albums"].map { |title, album| Album.new(title, album) }
+      else
+        error "no such artist: '#{artist}'" unless @hash["artists"].key?(artist)
+        []
+      end
     end
 
     def jukebox(count = 50)

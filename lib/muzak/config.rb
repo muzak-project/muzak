@@ -6,6 +6,8 @@ module Muzak
       @config = YAML::load_file(CONFIG_FILE)
     else
       @config = {
+        "debug" => false,
+        "verbose" => false,
         "music" => File.expand_path("~/music"),
         "player" => "mpv",
         "index-autobuild" => 86400,

@@ -17,11 +17,11 @@ module Muzak
     end
 
     def debug?
-      !!$debug
+      Config.debug
     end
 
     def verbose?
-      !!$verbose
+      Config.verbose
     end
 
     def pretty(color = :none, str)

@@ -15,9 +15,6 @@ module Muzak
     attr_reader :index, :player, :plugins, :playlists
 
     def initialize(opts = {})
-      $debug = opts[:debug]
-      $verbose = opts[:verbose]
-
       verbose "muzak is starting..."
 
       @index = Index.new(Config.music, deep: Config.deep_index)

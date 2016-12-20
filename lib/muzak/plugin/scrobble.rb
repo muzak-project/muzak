@@ -6,7 +6,7 @@ module Muzak
     class Scrobble < StubPlugin
       include Utils
 
-      def initialize(instance)
+      def initialize
         super
         @username, @password_hash = Config.plugin_scrobble.split(":")
       end

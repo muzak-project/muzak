@@ -5,7 +5,7 @@ module Muzak
     class Cava < StubPlugin
       include Utils
 
-      def initialize(instance)
+      def initialize
         super
         @term_args = Shellwords.split Config.plugin_cava
         @pid = nil

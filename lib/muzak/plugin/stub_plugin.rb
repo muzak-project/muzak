@@ -7,10 +7,7 @@ module Muzak
         name.split("::").last.downcase
       end
 
-      attr_reader :instance
-
-      def initialize(instance)
-        @instance = instance
+      def initialize
         debug "loading #{self.class}"
       end
 

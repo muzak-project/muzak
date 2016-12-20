@@ -21,7 +21,7 @@ module Muzak
 
     def self.load_plugins!
       pks = Plugin.plugin_classes.select { |pk| Config.plugin? pk.plugin_name }
-      pks.map { |pk| pk.new(self) }
+      pks.map { |pk| pk.new }
     end
 
     PLUGIN_MAP = plugin_names.zip(plugin_classes).to_h.freeze

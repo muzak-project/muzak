@@ -8,6 +8,7 @@ module Muzak
       private
 
       def notify(msg)
+        return if msg.nil? || msg.empty?
         pid = Process.spawn("notify-send", "muzak", msg)
         Process.detach(pid)
       end

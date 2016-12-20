@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.description = "A library for controlling playlists and media players."
   s.authors = ["William Woodruff"]
   s.email = "william@tuffbizz.com"
-  s.files = Dir["LICENSE", "README.md", "lib/**/*"]
+  s.files = Dir["LICENSE", "README.md", ".yardopts", "lib/**/*"]
   s.executables = ["muzak", "muzakd", "muzak-cmd", "muzak-dmenu"]
   s.required_ruby_version = ">= 2.3.0"
   s.homepage = "https://github.com/woodruffw/muzak"

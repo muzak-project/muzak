@@ -4,14 +4,9 @@ require "muzak"
 require "readline"
 require "shellwords"
 
-opts = {
-  debug: ARGV.include?("--debug") || ARGV.include?("-d"),
-  verbose: ARGV.include?("--verbose") || ARGV.include?("-v"),
-}
+Thread.abort_on_exception = Muzak::Config.debug
 
-Thread.abort_on_exception = opts[:debug]
-
-muzak = Muzak::Instance.new(opts)
+muzak = Muzak::Instance.new
 
 COMMANDS = Muzak::Cmd.commands
 

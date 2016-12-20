@@ -3,15 +3,10 @@
 require "muzak"
 require "shellwords"
 
-opts = {
-  debug: ARGV.include?("--debug") || ARGV.include?("-d"),
-  verbose: ARGV.include?("--verbose") || ARGV.include?("-v"),
-}
+Process.daemon unless Muzak::Config.debug || Muzak::Config.verbose
+Thread.abort_on_exception = Muzak::Config.debug
 
-Process.daemon unless opts[:debug] || opts[:verbose]
-Thread.abort_on_exception = opts[:debug]
-
-muzak = Muzak::Instance.new(opts)
+muzak = Muzak::Instance.new
 
 fifo_path = File.join(Muzak::CONFIG_DIR, "muzak.fifo")
 File.delete(fifo_path) if File.exist?(fifo_path) # just in case a previous session died

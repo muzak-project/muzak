@@ -201,6 +201,8 @@ module Muzak
               # somehow.
               song = Song.new(get_property "path")
               instance.event :song_loaded, song
+            when "end-file"
+              instance.event :song_unloaded
             end
           end
         end

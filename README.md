@@ -18,7 +18,7 @@ Muzak is still a work in process. Don't expect stability or pleasant output.
 On the command-line:
 
 ```shell
-$ ruby -Ilib bin/muzak.rb # flags: --verbose, --debug
+$ ruby -Ilib bin/muzak.rb
 muzak> help
 ```
 

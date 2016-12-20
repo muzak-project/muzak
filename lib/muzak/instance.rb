@@ -19,7 +19,7 @@ module Muzak
 
       @index = Index.new(Config.music, deep: Config.deep_index)
 
-      @player = Player::PLAYER_MAP[Config.player].new(self)
+      @player = Player.load_player!(self)
 
       @plugins = Plugin.load_plugins!
 

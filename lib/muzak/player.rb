@@ -8,6 +8,10 @@ module Muzak
     PLAYER_MAP = {
       "stub" => Player::StubPlayer,
       "mpv" => Player::MPV
-    }
+    }.freeze
+
+    def self.load_player!(instance)
+      PLAYER_MAP[Config.player].new(instance)
+    end
   end
 end

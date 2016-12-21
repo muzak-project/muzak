@@ -5,7 +5,9 @@ require "thread"
 
 module Muzak
   module Player
+    # Exposes MPV's IPC to muzak for playback control.
     class MPV < StubPlayer
+      # @return [Boolean] Whether or not the current instance is running.
       def running?
         begin
           !!@pid && Process.waitpid(@pid, Process::WNOHANG).nil?
@@ -14,6 +16,8 @@ module Muzak
         end
       end
 
+      # Activate mpv by executing it and preparing for event processing.
+      # @return [void]
       def activate!
         return if running?
 
@@ -56,6 +60,8 @@ module Muzak
         instance.event :player_activated
       end
 
+      # Deactivate mpv by killing it and cleaning up.
+      # @return [void]
       def deactivate!
         return unless running?
 
@@ -73,38 +79,59 @@ module Muzak
         File.delete(@sock_path) if @sock_path && File.exists?(@sock_path)
       end
 
+      # Tell mpv to begin playback.
+      # @return [void]
+      # @note Does nothing is playback is already in progress.
       def play
         return unless running?
 
         set_property "pause", false
       end
 
+      # Tell mpv to pause playback.
+      # @return [void]
+      # @note Does nothing is playback is already paused.
       def pause
         return unless running?
 
         set_property "pause", true
       end
 
+      # @return [Boolean] Whether or not mpv is currently playing.
       def playing?
         return false unless running?
 
         !get_property "pause"
       end
 
+      # Tell mpv to play the next song in its queue.
+      # @return [void]
+      # @note Does nothing if the current song is the last.
       def next_song
         command "playlist-next"
       end
 
+      # Tell mpv to play the previous song in its queue.
+      # @return [void]
+      # @note Does nothing if the current song is the first.
       def previous_song
         command "playlist-prev"
       end
 
+      # Tell mpv to add the given song to its queue.
+      # @param song [Song] the song to add
+      # @return [void]
+      # @note Activates mpv if not already activated.
       def enqueue_song(song)
         activate! unless running?
 
         load_song song, song.best_guess_album_art
       end
 
+      # Tell mpv to add the given album to its queue.
+      # @param album [Album] the album to add
+      # @return [void]
+      # @note Activates mpv if not already activated.
       def enqueue_album(album)
         activate! unless running?
 
@@ -113,6 +140,10 @@ module Muzak
         end
       end
 
+      # Tell mpv to add the given playlist to its queue.
+      # @param playlist [Playlist] the playlist to add
+      # @return [void]
+      # @note Activates mpv if not already activated.
       def enqueue_playlist(playlist)
         activate! unless running?
 
@@ -121,6 +152,9 @@ module Muzak
         end
       end
 
+      # Get mpv's internal queue.
+      # @return [Array<Song>] all songs in mpv's queue
+      # @note This includes songs already played.
       def list_queue
         entries = get_property "playlist/count"
 
@@ -133,18 +167,24 @@ module Muzak
         playlist
       end
 
+      # Shuffle mpv's internal queue.
+      # @return [void]
       def shuffle_queue
         return unless running?
 
         command "playlist-shuffle"
       end
 
+      # Clears mpv's internal queue.
+      # @return [void]
       def clear_queue
         return unless running?
 
         command "playlist-clear"
       end
 
+      # Get mpv's currently playing song.
+      # @return [Song] the currently playing song
       def now_playing
         return unless running? && playing?
 

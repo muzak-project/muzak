@@ -1,9 +1,5 @@
 module Muzak
   module Cmd
-    def _playlists_loaded?
-      !!playlists
-    end
-
     def list_playlists(*args)
       Playlist.playlist_names.each do |playlist|
         info playlist
@@ -21,7 +17,6 @@ module Muzak
     end
 
     def enqueue_playlist(*args)
-      return unless _playlists_loaded?
       fail_arity(args, 1)
       pname = args.shift
 
@@ -30,8 +25,6 @@ module Muzak
     end
 
     def playlist_add_album(*args)
-      return unless _playlists_loaded?
-
       pname = args.shift
       return if pname.nil?
 
@@ -45,8 +38,6 @@ module Muzak
     end
 
     def playlist_add_artist(*args)
-      return unless _playlists_loaded?
-
       pname = args.shift
       return if pname.nil?
 
@@ -75,8 +66,6 @@ module Muzak
     end
 
     def playlist_shuffle(*args)
-      return unless _playlists_loaded?
-
       pname = args.shift
       return if pname.nil?
 

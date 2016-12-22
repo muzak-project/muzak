@@ -1,4 +1,5 @@
 require "yaml"
+require "fileutils"
 
 module Muzak
   # Muzak's static configuration dumping ground.
@@ -13,13 +14,17 @@ module Muzak
     else
       @config = {
         "debug" => false,
-        "verbose" => false,
+        "verbose" => true,
         "music" => File.expand_path("~/music"),
         "player" => "mpv",
         "index-autobuild" => 86400,
         "deep-index" => false,
         "jukebox-size" => 100
       }
+
+      [CONFIG_DIR, PLAYLIST_DIR, USER_PLUGIN_DIR, USER_COMMAND_DIR].each do |d|
+        FileUtils.mkdir_p d
+      end
 
       File.open(CONFIG_FILE, "w") { |io| io.write @config.to_yaml }
     end

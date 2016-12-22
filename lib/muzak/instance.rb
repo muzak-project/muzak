@@ -34,6 +34,8 @@ module Muzak
     def initialize(opts = {})
       verbose "muzak is starting..."
 
+      error! "#{Config.music} doesn't exist" unless File.exist?(Config.music)
+
       @index = Index.new(Config.music, deep: Config.deep_index)
 
       @player = Player.load_player!(self)

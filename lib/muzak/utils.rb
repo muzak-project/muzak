@@ -89,6 +89,14 @@ module Muzak
       output pretty(:red, "error"), "[#{self.class.name}]", args
     end
 
+    # Outputs a boxed error message and then exits.
+    # @param args [Array<String>] the message(s)
+    # @return [void]
+    def error!(*args)
+      error *args
+      exit 1
+    end
+
     # Outputs a boxed debugging message.
     # @param args [Array<String>] the message(s)
     # @return [void]

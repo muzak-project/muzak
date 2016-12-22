@@ -155,7 +155,9 @@ module Muzak
 
             if music?(file)
               index_hash["artists"][artist]["albums"][album]["songs"] << file
-              index_hash["artists"][artist]["albums"][album]["deep-songs"] << Song.new(file)
+              if deep?
+                index_hash["artists"][artist]["albums"][album]["deep-songs"] << Song.new(file)
+              end
             end
           end
 

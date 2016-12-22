@@ -85,9 +85,7 @@ module Muzak
       album_name = args.join(" ")
       return if album_name.nil?
 
-      debug album_name
       album = index.albums[album_name]
-      debug album.to_s
       return if album.nil?
 
       player.enqueue_album album

@@ -16,7 +16,7 @@ module Muzak
       @title = title
       @cover_art = album_hash["cover"]
 
-      if album_hash["deep-songs"]
+      unless album_hash["deep-songs"].empty?
         @songs = album_hash["deep-songs"]
       else
         @songs = album_hash["songs"].map { |s| Song.new(s) }

@@ -54,6 +54,7 @@ module Muzak
     # @note The behavior of this method is affected by the value of
     #   {Muzak::Config.index_autobuild}.
     def outdated?
+      return false unless Config.index_autobuild
       Time.now.to_i - timestamp >= Config.index_autobuild
     end
 

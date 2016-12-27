@@ -163,7 +163,15 @@ module Muzak
           end
 
           index_hash["artists"][artist]["albums"][album]["songs"].sort!
-          index_hash["artists"][artist]["albums"][album]["deep-songs"].sort_by!(&:track)
+
+          # if any of the track numbers in the album are > 0 (the fallback),
+          # sort by ID3 track numbers. otherwise, hope that the song
+          # paths contain track numbers (e.g, "01 song.mp3").
+          if index_hash["artists"][artist]["albums"][album]["deep-songs"].any? { |s| s.track > 0 }
+            index_hash["artists"][artist]["albums"][album]["deep-songs"].sort_by!(&:track)
+          else
+            index_hash["artists"][artist]["albums"][album]["deep-songs"].sort_by!(&:path)
+          end
         end
       end
 

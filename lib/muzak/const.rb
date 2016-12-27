@@ -1,6 +1,6 @@
 module Muzak
   # Muzak's current version
-  VERSION = "0.0.12".freeze
+  VERSION = "0.0.13".freeze
 
   # The root directory for all user configuration, data, etc
   CONFIG_DIR = File.expand_path("~/.config/muzak").freeze

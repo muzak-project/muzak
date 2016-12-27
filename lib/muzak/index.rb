@@ -3,6 +3,10 @@ module Muzak
   class Index
     include Utils
 
+    def self.load_index!
+      Index.new(Config.music, deep: Config.deep_index)
+    end
+
     # @return [String] the path of the root of the music tree
     attr_accessor :tree
 

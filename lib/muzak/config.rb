@@ -26,12 +26,17 @@ module Muzak
         FileUtils.mkdir_p d
       end
 
-      File.open(CONFIG_FILE, "w") { |io| io.write @config.to_yaml }
+      sync!
     end
 
-    @config.each do |key, value|
+    @config.each do |key, _|
       define_singleton_method Utils.resolve_command(key) do
-        value
+        @config[key]
+      end
+
+      define_singleton_method "#{Utils.resolve_command(key)}=" do |value|
+        @config[key] = value
+        sync!
       end
     end
 
@@ -39,6 +44,10 @@ module Muzak
     # @return [false]
     def self.method_missing(method, *args)
       false
+    end
+
+    def self.sync!
+      File.open(CONFIG_FILE, "w") { |io| io.write @config.to_yaml }
     end
 
     # @return [Boolean] whether or not the given plugin is configured

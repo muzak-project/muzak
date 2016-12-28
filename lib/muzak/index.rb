@@ -18,10 +18,11 @@ module Muzak
 
     # @param tree [String] the root to begin indexing from
     # @param deep [Boolean] whether to build a "deep" index
+    # @param sync [Boolean] whether or not to save to {Muzak::INDEX_FILE}
     # @note if the index ({Muzak::INDEX_FILE}) already exists and is not
     #   outdated, no building is performed.
     # @see #build!
-    def initialize(tree, deep: false)
+    def initialize(tree, deep: false, sync: true)
       @tree = tree
       @deep = deep
 
@@ -31,17 +32,23 @@ module Muzak
         return unless outdated?
       end
 
-      build!
+      build!(sync)
+    end
+
+    # Synchronize the in-memory index hash with {Muzak::INDEX_FILE}.
+    def sync!
+      File.open(INDEX_FILE, "w") { |io| io.write Marshal::dump @hash }
     end
 
     # (Re)builds and saves the index ({Muzak::INDEX_FILE}) to disk.
+    # @param sync [Boolean] whether or not to save to {Muzak::INDEX_FILE}
     # @note This method can be expensive.
-    def build!
+    def build!(sync: true)
       @hash = build_index_hash!
 
       debug "indexed #{albums.length} albums by #{artists.length} artists"
 
-      File.open(INDEX_FILE, "w") { |io| io.write Marshal::dump @hash }
+      sync! if sync
     end
 
     # @return [Boolean] whether or not the current index is deep

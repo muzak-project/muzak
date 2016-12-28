@@ -99,7 +99,9 @@ module Muzak
 
       songs = index.jukebox(count.to_i)
 
-      songs.each { |s| player.enqueue_song s }
+      Thread.new do
+        songs.each { |s| player.enqueue_song s }
+      end
     end
 
     # Tell the player to list its internal queue.

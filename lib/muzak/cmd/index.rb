@@ -17,9 +17,7 @@ module Muzak
     # List all artists in the index.
     # @command `list-artists`
     # @cmdexample `muzak> list-artists`
-    def list_artists(*args)
-      warn_arity(args, 0)
-
+    def list_artists
       build_response data: {
         artists: index.artists
       }
@@ -28,9 +26,7 @@ module Muzak
     # List all albums in the index.
     # @command `list-albums`
     # @cmdexample `muzak> list-albums`
-    def list_albums(*args)
-      warn_arity(args, 0)
-
+    def list_albums
       build_response data: {
         albums: index.album_names
       }

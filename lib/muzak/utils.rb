@@ -115,24 +115,6 @@ module Muzak
       output pretty(:blue, "verbose"), args
     end
 
-    # Outputs a boxed warning message unless the arity of the given arguments
-    #   equals the expected arity.
-    # @param args [Array<String>] the arguments
-    # @param arity [Integer] the expected arity
-    # @return [void]
-    def warn_arity(args, arity)
-      warn "expected #{arity} arguments, got #{args.length}" unless args.length == arity
-    end
-
-    # Outputs a boxed failure message unless the arity of the given arguments
-    #   equals the expected arity.
-    # @param args [Array<String>] the arguments
-    # @param arity [Integer] the expected arity
-    # @return [void]
-    def fail_arity(args, arity)
-      error "needed #{arity} arguments, got #{args.length}" unless args.length == arity
-    end
-
     # Returns a response hash containing the given data and error.
     # @param error [String] the error string, if needed
     # @param data [String, Hash] the data, if needed

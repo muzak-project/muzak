@@ -30,19 +30,3 @@ loop do
     client.close
   end
 end
-
-# fifo_path = File.join(Muzak::CONFIG_DIR, "muzak.fifo")
-# File.delete(fifo_path) if File.exist?(fifo_path) # just in case a previous session died
-# File.mkfifo(fifo_path)
-
-# File.open(fifo_path, "r+") do |fifo|
-#   loop do
-#     cmd_argv = Shellwords.split(fifo.readline) rescue next
-#     next if cmd_argv.empty? || cmd_argv.any?(&:empty?)
-#     cmd = cmd_argv.shift
-#     muzak.command cmd, *cmd_argv
-#     break if cmd == "quit"
-#   end
-# end
-
-# File.delete(fifo_path) if File.exist?(fifo_path)

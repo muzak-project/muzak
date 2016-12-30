@@ -132,5 +132,17 @@ module Muzak
     def fail_arity(args, arity)
       error "needed #{arity} arguments, got #{args.length}" unless args.length == arity
     end
+
+    # Returns a response hash containing the given data and error.
+    # @param error [String] the error string, if needed
+    # @param data [String, Hash] the data, if needed
+    def build_response(error: nil, data: nil)
+      { response: {
+          error: error,
+          data: data,
+          method: caller_locations.first.label
+        }
+      }
+    end
   end
 end

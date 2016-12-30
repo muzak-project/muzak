@@ -4,11 +4,14 @@ module Muzak
     # @command `index-build`
     # @cmdexample `muzak> index-build`
     def index_build(*args)
-      warn_arity(args, 0)
-
       verbose "building a new index, this may take a while"
 
       index.build!
+
+      build_response data: {
+        artists: index.artists.size,
+        albums: index.albums.size
+      }
     end
 
     # List all artists in the index.
@@ -17,7 +20,9 @@ module Muzak
     def list_artists(*args)
       warn_arity(args, 0)
 
-      puts index.artists.join("\n")
+      build_response data: {
+        artists: index.artists
+      }
     end
 
     # List all albums in the index.
@@ -26,7 +31,9 @@ module Muzak
     def list_albums(*args)
       warn_arity(args, 0)
 
-      puts index.album_names.join("\n")
+      build_response data: {
+        albums: index.album_names
+      }
     end
 
     # List all albums by the given artist in the index.
@@ -34,9 +41,12 @@ module Muzak
     # @cmdexample `muzak> albums-by-artist Your Favorite Artist`
     def albums_by_artist(*args)
       artist = args.join(" ")
-      return if artist.nil?
 
-      puts index.albums_by(artist).map(&:title)
+      albums = index.albums_by(artist).map(&:title)
+
+      build_response data: {
+        albums: albums
+      }
     end
 
     # List all songs by the given artist in the index.
@@ -44,9 +54,12 @@ module Muzak
     # @cmdexample `muzak> songs-by-artist Your Next Favorite Artist`
     def songs_by_artist(*args)
       artist = args.join(" ")
-      return if artist.nil?
 
-      puts index.songs_by(artist).map(&:title)
+      songs = index.songs_by(artist).map(&:title)
+
+      build_response data: {
+        songs: songs
+      }
     end
   end
 end

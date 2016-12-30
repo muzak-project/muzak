@@ -11,12 +11,17 @@ module Muzak
     #   instance.command "enqueue-playlist", "favorites"
     #   instance.command "pause"
     def command(cmd, *args)
-      send Utils.resolve_command(cmd), *args
-    end
-
-    def method_missing(meth, *args)
-      warn "unknown command: #{Utils.resolve_method(meth)}"
-      help
+      if Cmd.commands.include?(cmd)
+        meth = method(Utils.resolve_command(cmd))
+        if meth.arity == args.size || meth.arity <= -1
+          meth.call *args
+        else
+          build_response error: "got #{args.size} args, needed #{meth.arity}"
+        end
+      else
+        warn "unknown command: '#{cmd}'"
+        build_response error: "unknown command '#{cmd}'"
+      end
     end
 
     # @return [Index] the instance's music index

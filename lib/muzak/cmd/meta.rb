@@ -5,7 +5,10 @@ module Muzak
     # @cmdexample `muzak> help`
     def help(*args)
       commands = Muzak::Cmd.commands.join(", ")
-      info "available commands: #{commands}"
+
+      build_response data: {
+        commands: commands
+      }
     end
 
     # List all available plugins.
@@ -14,8 +17,9 @@ module Muzak
     # @note This list will differ from loaded plugins, if not all available
     #   plugins are configured.
     def list_plugins
-      plugins = Plugin.plugin_names.join(", ")
-      puts "available plugins: #{plugins}"
+      build_response data: {
+        plugins: Plugin.plugin_names
+      }
     end
 
     # Terminates the muzak instance (**not** just the client).
@@ -24,6 +28,8 @@ module Muzak
     def quit
       verbose "muzak is quitting..."
       player.deactivate!
+
+      build_response
     end
   end
 end

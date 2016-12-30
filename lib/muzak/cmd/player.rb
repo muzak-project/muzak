@@ -11,6 +11,8 @@ module Muzak
       end
 
       player.activate!
+
+      build_response
     end
 
     # Deactivate the configured player.
@@ -22,6 +24,8 @@ module Muzak
 
       # do cleanup even if the player isn't running, just in case
       player.deactivate!
+
+      build_response
     end
 
     # Tell the player to begin playback.
@@ -29,6 +33,8 @@ module Muzak
     # @cmdexample `muzak> play`
     def play
       player.play
+
+      build_response
     end
 
     # Tell the player to pause.
@@ -36,6 +42,8 @@ module Muzak
     # @cmdexample `muzak> pause`
     def pause
       player.pause
+
+      build_response
     end
 
     # Tell the player to toggle its playback state.
@@ -47,6 +55,8 @@ module Muzak
       else
         player.play
       end
+
+      build_response
     end
 
     # Tell the player to load the next song.
@@ -54,6 +64,8 @@ module Muzak
     # @cmdexample `muzak> next`
     def next
       player.next_song
+
+      build_response
     end
 
     # Tell the player to load the previous song.
@@ -61,6 +73,8 @@ module Muzak
     # @cmdexample `muzak> previous`
     def previous
       player.previous_song
+
+      build_response
     end
 
     # Tell the player to enqueue all songs by the given artist.
@@ -68,13 +82,15 @@ module Muzak
     # @cmdexample `muzak> enqueue-artist Your Favorite Artist`
     def enqueue_artist(*args)
       artist = args.join(" ")
-      return if artist.nil?
-
       albums = index.albums_by(artist)
-      return if albums.empty?
 
-      albums.each do |album|
-        player.enqueue_album album
+      unless albums.empty?
+        albums.each do |album|
+          player.enqueue_album album
+        end
+        build_response
+      else
+        build_response error: "no albums by: '#{artist}'"
       end
     end
 
@@ -83,32 +99,39 @@ module Muzak
     # @cmdexample `muzak> enqueue-album Your Favorite Album`
     def enqueue_album(*args)
       album_name = args.join(" ")
-      return if album_name.nil?
 
       album = index.albums[album_name]
-      return if album.nil?
 
-      player.enqueue_album album
+      if album
+        player.enqueue_album album
+        build_response
+      else
+        build_response error: "no such album: '#{album_name}'"
+      end
     end
 
     # Tell the player to load the given number of random songs.
     # @command `jukebox [count]`
     # @cmdexample `muzak> jukebox 150`
-    def jukebox(*args)
-      count = args.shift || Config.jukebox_size
-
+    def jukebox(count = Config.jukebox_size)
       songs = index.jukebox(count.to_i)
 
       Thread.new do
         songs.each { |s| player.enqueue_song s }
       end
+
+      build_response data: {
+        jukebox: songs.map(&:full_title)
+      }
     end
 
     # Tell the player to list its internal queue.
     # @command `list-queue`
     # @cmdexample `muzak> list-queue`
     def list_queue
-      puts player.list_queue.map(&:title)
+      build_response data: {
+        queue: player.list_queue.map(&:title)
+      }
     end
 
     # Tell the player to shuffle its internal queue.
@@ -116,6 +139,8 @@ module Muzak
     # @cmdexample `muzak> shuffle-queue`
     def shuffle_queue
       player.shuffle_queue
+
+      build_response
     end
 
     # Tell the player to clear its internal queue.
@@ -124,15 +149,21 @@ module Muzak
     # @note This does not (usually) stop the current song.
     def clear_queue
       player.clear_queue
+
+      build_response
     end
 
     # Retrieve the currently playing song from the player and print it.
     # @command `now-playing`
     # @cmdexample `muzak> now-playing`
     def now_playing
-      return unless player.playing?
-
-      info player.now_playing.full_title
+      if player.playing?
+        build_response data: {
+          playing: player.now_playing.full_title
+        }
+      else
+        build_response error: "no currently playing song"
+      end
     end
   end
 end

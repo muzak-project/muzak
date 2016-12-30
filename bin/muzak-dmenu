@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
 
 require "muzak"
+require "socket"
 
 def fatal(msg)
-  puts "Fatal: #{msg}"
+  STDERR.puts "Fatal: #{msg}"
   exit 1
 end
 
@@ -13,12 +14,17 @@ def dmenu(options)
 	`printf "#{opts}" | #{dmenu}`
 end
 
-fifo_path = File.join(Muzak::CONFIG_DIR, "muzak.fifo")
-
-fatal "Is muzakd running?" unless File.exist?(fifo_path)
+begin
+  server_host = Muzak::Config.daemon_host
+  server_port = Muzak::Config.daemon_port
+  sock = TCPSocket.new server_host, server_port
+rescue
+  fatal "Is muzakd running?"
+end
 
 command = dmenu Muzak::Cmd.commands
 
-File.open(fifo_path, "w") do |io|
-  io.puts command unless command.empty?
-end
+sock.puts command unless command.empty?
+puts sock.gets
+
+sock.close

@@ -1,19 +1,21 @@
 #!/usr/bin/env ruby
 
 require "muzak"
+require "socket"
 
 def fatal(msg)
   puts "Fatal: #{msg}"
   exit 1
 end
 
-fifo_path = File.join(Muzak::CONFIG_DIR, "muzak.fifo")
-
-fatal "Is muzakd running?" unless File.exist?(fifo_path)
-
-File.open(fifo_path, "w") do |io|
-  # we don't actually need to do this, but let's be verbose for the user
-  fatal "Unknown command." unless Muzak::Cmd.commands.include?(ARGV.first)
-
-  io.puts ARGV.join(" ")
+begin
+  server_host = Muzak::Config.daemon_host
+  server_port = Muzak::Config.daemon_port
+  sock = TCPSocket.new server_host, server_port
+rescue
+  fatal "Is muzakd running?"
 end
+
+sock.puts ARGV.join(" ")
+puts sock.gets
+sock.close

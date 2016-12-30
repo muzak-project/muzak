@@ -2,24 +2,47 @@
 
 require "muzak"
 require "shellwords"
+require "socket"
+require "json"
+require "thread"
 
 Process.daemon unless Muzak::Config.debug || Muzak::Config.verbose
 Thread.abort_on_exception = Muzak::Config.debug
 
 muzak = Muzak::Instance.new
 
-fifo_path = File.join(Muzak::CONFIG_DIR, "muzak.fifo")
-File.delete(fifo_path) if File.exist?(fifo_path) # just in case a previous session died
-File.mkfifo(fifo_path)
+server_port = Muzak::Config.daemon_port || 2669
+server = TCPServer.new server_port
 
-File.open(fifo_path, "r+") do |fifo|
-  loop do
-    cmd_argv = Shellwords.split(fifo.readline) rescue next
+exiting = false
+
+loop do
+  begin
+    client = server.accept
+    cmd_argv = Shellwords.split(client.readline)
     next if cmd_argv.empty? || cmd_argv.any?(&:empty?)
-    cmd = cmd_argv.shift
-    muzak.command cmd, *cmd_argv
-    break if cmd == "quit"
+    client.puts(muzak.command(*cmd_argv).to_json)
+    break if cmd_argv.first == "quit"
+  rescue Exception => e
+    client.puts({ error: e.to_s }.to_json)
+    raise e
+  ensure
+    client.close
   end
 end
 
-File.delete(fifo_path) if File.exist?(fifo_path)
+# fifo_path = File.join(Muzak::CONFIG_DIR, "muzak.fifo")
+# File.delete(fifo_path) if File.exist?(fifo_path) # just in case a previous session died
+# File.mkfifo(fifo_path)
+
+# File.open(fifo_path, "r+") do |fifo|
+#   loop do
+#     cmd_argv = Shellwords.split(fifo.readline) rescue next
+#     next if cmd_argv.empty? || cmd_argv.any?(&:empty?)
+#     cmd = cmd_argv.shift
+#     muzak.command cmd, *cmd_argv
+#     break if cmd == "quit"
+#   end
+# end
+
+# File.delete(fifo_path) if File.exist?(fifo_path)

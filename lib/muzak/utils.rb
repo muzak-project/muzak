@@ -68,13 +68,6 @@ module Muzak
       puts "[#{box}] #{msg}"
     end
 
-    # Outputs a boxed informational message.
-    # @param args [Array<String>] the message(s)
-    # @return [void]
-    def info(*args)
-      output pretty(:green, "info"), args
-    end
-
     # Outputs a boxed warning message.
     # @param args [Array<String>] the message(s)
     # @return [void]

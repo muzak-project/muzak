@@ -2,18 +2,16 @@
 
 require "muzak"
 require "socket"
-
-def fatal(msg)
-  puts "Fatal: #{msg}"
-  exit 1
-end
+require "json"
 
 begin
   server_host = Muzak::Config.daemon_host
   server_port = Muzak::Config.daemon_port
   sock = TCPSocket.new server_host, server_port
 rescue
-  fatal "Is muzakd running?"
+  error = { response: { error: "muzak is not running" } }.to_json
+  puts error
+  exit 1
 end
 
 sock.puts ARGV.join(" ")

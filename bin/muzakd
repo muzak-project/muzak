@@ -27,6 +27,6 @@ loop do
     client.puts({ error: e.to_s }.to_json)
     raise e
   ensure
-    client.close
+    client.close if client
   end
 end

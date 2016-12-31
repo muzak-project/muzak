@@ -14,8 +14,6 @@ muzak = Muzak::Instance.new
 server_port = Muzak::Config.daemon_port || 2669
 server = TCPServer.new server_port
 
-exiting = false
-
 loop do
   begin
     client = server.accept

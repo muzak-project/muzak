@@ -22,7 +22,7 @@ loop do
     client.puts(muzak.command(*cmd_argv).to_json)
     break if cmd_argv.first == "quit"
   rescue Exception => e
-    client.puts({ error: e.to_s }.to_json)
+    client.puts({ response: { error: e.to_s } }.to_json)
   ensure
     client.close if client
   end

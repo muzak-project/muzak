@@ -232,15 +232,7 @@ module Muzak
           Thread.new do
             case event
             when "file-loaded"
-              # this really isn't ideal, since we already have access
-              # to Song objects earlier in the object's lifetime.
-              # the "correct" way to do this would be to sync an external
-              # playlist with mpv's internal one and access that instead
-              # of re-creating the Song from mpv properties.
-              # another idea: serialize Song objects into mpv's properties
-              # somehow.
-              song = Song.new(get_property "path")
-              instance.event :song_loaded, song
+              instance.event :song_loaded, now_playing
             when "end-file"
               instance.event :song_unloaded
               @_now_playing = nil

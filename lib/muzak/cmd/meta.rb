@@ -4,10 +4,8 @@ module Muzak
     # @command `help`
     # @cmdexample `muzak> help`
     def help(*args)
-      commands = Muzak::Cmd.commands.join(", ")
-
       build_response data: {
-        commands: commands
+        commands: Muzak::Cmd.commands
       }
     end
 

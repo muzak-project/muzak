@@ -1,6 +1,18 @@
 module Muzak
   module Cmd
-    # Print a "helpful" listing of commands.
+    # Return a simple heartbeat message.
+    # @command `ping`
+    # @cmdexample `muzak> ping`
+    def ping
+      timestamp = Time.now.to_i
+      debug "pong: #{timestamp}"
+
+      build_response data: {
+        pong: timestamp
+      }
+    end
+
+    # Return a "helpful" listing of commands.
     # @command `help`
     # @cmdexample `muzak> help`
     def help(*args)

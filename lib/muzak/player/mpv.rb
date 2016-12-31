@@ -188,7 +188,7 @@ module Muzak
       def now_playing
         return unless running? && playing?
 
-        Song.new(get_property "path")
+        @_now_playing ||= Song.new(get_property "path")
       end
 
       private
@@ -243,6 +243,7 @@ module Muzak
               instance.event :song_loaded, song
             when "end-file"
               instance.event :song_unloaded
+              @_now_playing = nil
             end
           end
         end

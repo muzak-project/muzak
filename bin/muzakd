@@ -15,15 +15,15 @@ server_port = Muzak::Config.daemon_port || 2669
 server = TCPServer.new server_port
 
 loop do
-  begin
-    client = server.accept
-    cmd_argv = Shellwords.split(client.readline)
-    next if cmd_argv.empty? || cmd_argv.any?(&:empty?)
-    client.puts(muzak.command(*cmd_argv).to_json)
-    break if cmd_argv.first == "quit"
-  rescue Exception => e
-    client.puts({ response: { error: e.to_s } }.to_json)
-  ensure
-    client.close if client
+  Thread.new(server.accept) do |client|
+    begin
+      cmd_argv = Shellwords.split(client.readline)
+      client.puts(muzak.command(*cmd_argv).to_json)
+      exit! 0 if cmd_argv.first == "quit"
+    rescue Exception => e
+      client.puts({ response: { error: e.to_s } }.to_json)
+    ensure
+      client.close if client
+    end
   end
 end

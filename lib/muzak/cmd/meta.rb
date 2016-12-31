@@ -27,7 +27,7 @@ module Muzak
       verbose "muzak is quitting..."
       player.deactivate!
 
-      build_response
+      build_response data: "quitting"
     end
   end
 end

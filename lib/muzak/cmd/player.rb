@@ -7,12 +7,13 @@ module Muzak
     def player_activate
       if player.running?
         warn "player is already running"
-        return
+      else
+        player.activate!
       end
 
-      player.activate!
-
-      build_response
+      build_response data: {
+        player: player.class.name
+      }
     end
 
     # Deactivate the configured player.
@@ -25,7 +26,9 @@ module Muzak
       # do cleanup even if the player isn't running, just in case
       player.deactivate!
 
-      build_response
+      build_response data: {
+        player: player.class.name
+      }
     end
 
     # Tell the player to begin playback.

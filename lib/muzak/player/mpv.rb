@@ -184,9 +184,9 @@ module Muzak
       end
 
       # Get mpv's currently playing song.
-      # @return [Song] the currently playing song
+      # @return [Song, nil] the currently playing song
       def now_playing
-        return unless running? && playing?
+        return unless playing?
 
         @_now_playing ||= Song.new(get_property "path")
       end

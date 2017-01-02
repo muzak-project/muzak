@@ -547,70 +547,121 @@ $ muzak-cmd next
 
 ## `now-playing`
 
+Returns the currently playing song.
+
 ### Syntax
+
+`now-playing`
 
 ### Example
 
 ```bash
-$ muzak-cmd
+$ muzak-cmd now-playing
 ```
 
 ### Example Response
 
 ```json
-
+{
+   "response" : {
+      "error" : null,
+      "data" : {
+         "playing" : "22 Offs by Chance The Rapper on 10 Day"
+      },
+      "method" : "now_playing"
+   }
+}
 ```
 
 ## `pause`
 
+Pauses the player.
+
 ### Syntax
+
+`pause`
 
 ### Example
 
 ```bash
-$ muzak-cmd
+$ muzak-cmd pause
 ```
 
 ### Example Response
 
 ```json
-
+{
+   "response" : {
+      "data" : null,
+      "method" : "pause",
+      "error" : null
+   }
+}
 ```
 
 ## `play`
 
+Tells the play to play.
+
 ### Syntax
+
+`play`
 
 ### Example
 
 ```bash
-$ muzak-cmd
+$ muzak-cmd play
 ```
 
 ### Example Response
 
 ```json
-
+{
+   "response" : {
+      "error" : null,
+      "data" : null,
+      "method" : "play"
+   }
+}
 ```
 
 ## `player-activate`
 
+Activates the player.
+
+**Note:** This will usually be done automatically when the user issues a command
+that affects the playback state for the first time. Calling it manually may
+be useful for debugging purposes.
+
 ### Syntax
 
 ### Example
 
 ```bash
-$ muzak-cmd
+$ muzak-cmd player-activate
 ```
 
 ### Example Response
 
 ```json
-
+{
+   "response" : {
+      "error" : null,
+      "data" : {
+        "player": "Muzak::Player::MPV"
+      },
+      "method" : "player_activate"
+   }
+}
 ```
 
 ## `player-deactivate`
 
+Deactivates the player.
+
+**Note:** This will usually be done automatically when muzak is quitting.
+Calling it manually may be useful for debugging purposes.
+
 ### Syntax
 
 ### Example
@@ -622,87 +673,145 @@ $ muzak-cmd
 ### Example Response
 
 ```json
-
+{
+   "response" : {
+      "error" : null,
+      "data" : {
+        "player": "Muzak::Player::MPV"
+      },
+      "method" : "player_deactivate"
+   }
+}
 ```
 
 ## `playlist-add-album`
 
+Adds the given album to the given playlist.
+
 ### Syntax
+
+`playlist-add-album <playlist name> <album name>`
 
 ### Example
 
 ```bash
-$ muzak-cmd
+$ muzak-cmd playlist-add-album best-of-2016 Coloring Book
 ```
 
 ### Example Response
 
 ```json
-
+{
+   "response" : {
+      "error" : null,
+      "data" : null,
+      "method" : "playlist_add_album"
+   }
+}
 ```
 
 ## `playlist-add-artist`
 
+Adds the given artist (i.e., their songs) to the given playlist.
+
 ### Syntax
+
+`playlist-add-artist <playlist name> <artist name>`
 
 ### Example
 
 ```bash
-$ muzak-cmd
+$ muzak-cmd playlist-add-artist dad-rock The Beatles
 ```
 
 ### Example Response
 
 ```json
-
+{
+   "response" : {
+      "error" : null,
+      "data" : null,
+      "method" : "playlist_add_artist"
+   }
+}
 ```
 
 ## `playlist-add-current`
 
+Adds the currently playing song to the given playlist.
+
 ### Syntax
+
+`playlist-add-current <playlist name>`
 
 ### Example
 
 ```bash
-$ muzak-cmd
+$ muzak-cmd playlist-add-current favorites
 ```
 
 ### Example Response
 
 ```json
-
+{
+   "response" : {
+      "error" : null,
+      "data" : null,
+      "method" : "playlist_add_current"
+   }
+}
 ```
 
 ## `playlist-del-current`
 
+Removes the currently playing song from the given playlist.
+
 ### Syntax
+
+`playlist-del-current <playlist name>`
 
 ### Example
 
 ```bash
-$ muzak-cmd
+$ muzak-cmd playlist-del-current favorites
 ```
 
 ### Example Response
 
 ```json
-
+{
+   "response" : {
+      "error" : null,
+      "data" : null,
+      "method" : "playlist_del_current"
+   }
+}
 ```
 
 ## `playlist-delete`
 
+Deletes the given playlist.
+
 ### Syntax
+
+`playlist-delete <playlist name>`
 
 ### Example
 
 ```bash
-$ muzak-cmd
+$ muzak-cmd playlist-delete worst-of-2016
 ```
 
 ### Example Response
 
 ```json
-
+{
+   "response" : {
+      "error" : null,
+      "data" : null,
+      "method" : "playlist_delete"
+   }
+}
 ```
 
 ## `playlist-shuffle`

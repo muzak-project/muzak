@@ -15,19 +15,9 @@ and the state of the player.
 
 Muzak is still a work in process. Don't expect stability or pleasant output.
 
-On the command-line:
-
-```shell
-$ ruby -Ilib bin/muzak.rb
-muzak> help
-```
-
-Daemonized:
-
 ```shell
 $ ruby -Ilib bin/muzakd.rb
-$ echo "command" > ~/.config/muzak/muzak.fifo
-$ ruby -Ilib bin/muzak-cmd "command"
+$ ruby -Ilib bin/muzak-cmd enqueue-artist "The Beatles"
 ```
 
 ### TODO
@@ -35,5 +25,3 @@ $ ruby -Ilib bin/muzak-cmd "command"
 * GUI "frontend"?
 * isolation of art and music output (`Muzak::ArtProvider`?)
 * current indexing/sorting logic is terrible
-* all the documentation
-* readline's tab complete is terrible with spaces (maybe use `bond`?)

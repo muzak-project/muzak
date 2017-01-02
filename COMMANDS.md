@@ -29,9 +29,9 @@ This response will *always* look something like this:
 **always** check the `error` field. If `error` is non-`null`, then the rest of
 the response should be discarded (or at least not treated as a success).
 
-The `data` field may be either a string, array, or a sub-hash, depending on the
-command issued. The documentation below will clarify whichever is the case for
-each command.
+The `data` field may be either null, a string, array, or a sub-hash, depending
+on the command issued. The documentation below will clarify whichever is the
+case for each command.
 
 The `method` field corresponds to the {Muzak::Cmd} method that was invoked.
 In general this will be the "resolved" equivalent
@@ -39,6 +39,49 @@ In general this will be the "resolved" equivalent
 doesn't recognize a command or can't match the given arguments to the
 ones that the command expects, this field will be `command` instead
 (as the processing is terminated in {Muzak::Instance#command}).
+
+## Writing commands
+
+Since muzak commands are just ruby methods under {Muzak::Cmd}, users
+can write their own commands. These are loaded during muzak's initialization
+from `~/.config/muzak/commands/*.rb`.
+
+Commands are essentially first-class members of muzak, and as such can access
+just about everything available to a {Muzak::Instance}:
+
+* The current {Muzak::Index}.
+* The user's {Muzak::Player::StubPlayer player}.
+* All loaded {Muzak::Plugin::StubPlugin plugins}.
+* All loaded {Muzak::Playlist}s.
+
+This makes commands flexible, but also very dangerous - it's easy
+to monkeypatch over an existing command and subtly break muzak's behavior.
+
+Here's an example command:
+
+```ruby
+module Muzak
+  module Cmd
+    def dump_state
+      debug "dumping muzak's state"
+
+      build_response data: {
+        index: index.to_s
+        player: player.to_s
+        plugins: plugins.to_s
+        playlists: playlists.to_s
+      }
+    end
+  end
+end
+```
+
+In the above example, `dump_state` will be exposed as `dump-state` via
+{Muzak::Cmd.commands}, which is used by clients to enumerate and display
+available commands.
+
+It can also be invoked either directly (`Muzak::Instance#dump_state`) or
+through {Muzak::Instance#command} (`instance.command "dump-state"`).
 
 ## `albums-by-artist`
 
@@ -599,6 +642,36 @@ $ muzak-cmd pause
 }
 ```
 
+## `ping`
+
+Pings muzak to confirm that the instance is running as expected.
+
+**Note**: This is mostly useful for debugging purposes.
+
+### Syntax
+
+`ping`
+
+### Example
+
+```bash
+$ muzak-cmd ping
+```
+
+### Example Response
+
+```json
+{
+   "response" : {
+      "method" : "ping",
+      "error" : null,
+      "data" : {
+         "pong" : 1483395120
+      }
+   }
+}
+```
+
 ## `play`
 
 Tells the play to play.
@@ -816,114 +889,170 @@ $ muzak-cmd playlist-delete worst-of-2016
 
 ## `playlist-shuffle`
 
+Shuffles the given playlist.
+
+**Note:** If the playlist has already been enqueued, the playback order
+is not affected.
+
 ### Syntax
+
+`playlist-shuffle <playlist name>`
 
 ### Example
 
 ```bash
-$ muzak-cmd
+$ muzak-cmd playlist-shuffle favorites
 ```
 
 ### Example Response
 
 ```json
-
+{
+   "response" : {
+      "error" : null,
+      "data" : null,
+      "method" : "playlist_shuffle"
+   }
+}
 ```
 
 ## `previous`
 
+Play the previous song in the player's queue.
+
 ### Syntax
+
+`previous`
 
 ### Example
 
 ```bash
-$ muzak-cmd
+$ muzak-cmd previous
 ```
 
 ### Example Response
 
 ```json
-
+{
+   "response" : {
+      "error" : null,
+      "data" : null,
+      "method" : "previous"
+   }
+}
 ```
 
 ## `quit`
 
+Terminates muzak.
+
+**Note:** This terminates the {Muzak::Instance}, meaning that clients/interfaces
+are expected to terminate as well.
+
 ### Syntax
+
+`quit`
 
 ### Example
 
 ```bash
-$ muzak-cmd
+$ muzak-cmd quit
 ```
 
 ### Example Response
 
 ```json
-
+{
+   "response" : {
+      "error" : null,
+      "data" : "quitting",
+      "method" : "quit"
+   }
+}
 ```
 
 ## `shuffle-queue`
 
+Shuffles the player's playback queue.
+
 ### Syntax
+
+`shuffle-queue`
 
 ### Example
 
 ```bash
-$ muzak-cmd
+$ muzak-cmd shuffle-queue
 ```
 
 ### Example Response
 
 ```json
-
+{
+   "response" : {
+      "error" : null,
+      "data" : null,
+      "method" : "shuffle_queue"
+   }
+}
 ```
 
 ## `songs-by-artist`
 
+Returns all songs by the given artist.
+
 ### Syntax
+
+`songs-by-artist <artist name>`
 
 ### Example
 
 ```bash
-$ muzak-cmd
+$ muzak-cmd songs-by-artist "Bob Dylan"
 ```
 
 ### Example Response
 
 ```json
+{
+   "response" : {
+      "error" : null,
+      "data" : {
+         "songs" : [
+            "The Times They Are A' Changing",
+            "Hurricane",
+            "All Along the Watchtower"
+         ]
+      },
+      "method" : "songs_by_artist"
+   }
+}
 
 ```
 
 ## `toggle`
 
+Toggles the playback state of the player.
+
 ### Syntax
+
+`toggle`
 
 ### Example
 
 ```bash
-$ muzak-cmd
+$ muzak-cmd toggle
 ```
 
 ### Example Response
 
 ```json
-
+{
+   "response" : {
+      "error" : null,
+      "data" : null,
+      "method" : "toggle"
+   }
+}
 ```
-
-## `unfavorite`
-
-### Syntax
-
-### Example
-
-```bash
-$ muzak-cmd
-```
-
-### Example Response
-
-```json
-
-```
-
 

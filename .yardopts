@@ -1,1 +1,1 @@
---tag command:"muzak command" --tag cmdexample:"example invocation" --no-private --markup-provider=redcarpet --markup=markdown - README.md LICENSE
+--tag command:"muzak command" --tag cmdexample:"example invocation" --no-private --markup-provider=redcarpet --markup=markdown - README.md COMMANDS.md LICENSE

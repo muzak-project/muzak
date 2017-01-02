@@ -161,6 +161,9 @@ module Muzak
         playlist = []
 
         entries.times do |i|
+          # TODO: this is slow and should be avoided at all costs,
+          # since we have access to these Song instances earlier
+          # in the object's lifecycle.
           playlist << Song.new(get_property("playlist/#{i}/filename"))
         end
 

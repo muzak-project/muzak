@@ -6,7 +6,7 @@ module Muzak
     # @command `config-get <key>`
     # @cmdexample `muzak> config-get player`
     def config_get(key)
-      value = Config.send Utils.resolve_method(key)
+      value = Config.send Utils.resolve_command(key)
 
       build_response data: { key => value }
     end

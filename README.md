@@ -22,7 +22,10 @@ $ ruby -Ilib bin/muzak-cmd enqueue-artist "The Beatles"
 
 ### Documentation
 
-Documentation for user commands can be found under [COMMANDS.md](./COMMANDS.md).
+API documentation can be found on [RubyDoc](http://www.rubydoc.info/gems/muzak/).
+
+Documentation for user commands can be found under [COMMANDS.md](./COMMANDS.md),
+as well as on RubyDoc.
 
 ### TODO
 

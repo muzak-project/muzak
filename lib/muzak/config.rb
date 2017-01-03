@@ -8,6 +8,7 @@ module Muzak
   # @example
   #   # corresponds to `art-geometry: 300x300` in configuration
   #   Config.art_geometry # => "300x300"
+  # @see file:CONFIGURATION.md User Configuration
   class Config
     if File.exist?(CONFIG_FILE)
       @config = YAML::load_file(CONFIG_FILE)
@@ -46,6 +47,8 @@ module Muzak
       false
     end
 
+    # Synchronizes the in-memory configuration with {CONFIG_FILE}.
+    # @return [void]
     def self.sync!
       File.open(CONFIG_FILE, "w") { |io| io.write @config.to_yaml }
     end

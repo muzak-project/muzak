@@ -20,6 +20,10 @@ $ ruby -Ilib bin/muzakd.rb
 $ ruby -Ilib bin/muzak-cmd enqueue-artist "The Beatles"
 ```
 
+### Documentation
+
+Documentation for user commands can be found under [COMMANDS.md](./COMMANDS.md).
+
 ### TODO
 
 * GUI "frontend"?

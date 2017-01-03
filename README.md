@@ -1,10 +1,12 @@
 muzak
 =====
 
+[![Gem Version](https://badge.fury.io/rb/muzak.svg)](https://badge.fury.io/rb/muzak)
+
 muzak is an attempt at a metamusic player.
 
 It indexes a filesystem tree, providing metadata to a user's preferred media
-player. It also provides a pseudo-shell for controlling the indexed files
+player. It also provides a command API for controlling the indexed files
 and the state of the player.
 
 ### Screenshot

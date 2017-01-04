@@ -186,11 +186,11 @@ module Muzak
         command "playlist-clear"
       end
 
-      # Get mpv's currently playing song.
-      # @return [Song, nil] the currently playing song
+      # Get mpv's currently loaded song.
+      # @return [Song, nil] the currently loaded song
       def now_playing
-        return unless playing?
-
+        path = get_property "path"
+        return if path.empty?
         @_now_playing ||= Song.new(get_property "path")
       end
 

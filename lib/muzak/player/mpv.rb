@@ -190,7 +190,7 @@ module Muzak
       # @return [Song, nil] the currently loaded song
       def now_playing
         path = get_property "path"
-        return if path.empty?
+        return if path&.empty?
         @_now_playing ||= Song.new(get_property "path")
       end
 

@@ -50,6 +50,8 @@ module Muzak
       @playlists = Playlist.load_playlists!
 
       enqueue_playlist Config.autoplay if Config.autoplay
+
+      event :instance_started, self
     end
 
     # Dispatch an event to all plugins.

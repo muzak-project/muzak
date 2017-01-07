@@ -23,6 +23,7 @@ module Muzak
 
   # All events currently propagated by {Muzak::Instance#event}
   PLUGIN_EVENTS = [
+    :instance_started,
     :player_activated,
     :player_deactivated,
     :song_loaded,

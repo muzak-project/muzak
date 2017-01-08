@@ -29,18 +29,25 @@ module Muzak
       respond_to? "plugin_#{pname}"
     end
 
+    DEFAULT_CONFIG = {
+      # core defaults
+      "debug" => false,
+      "verbose" => true,
+      "music" => File.expand_path("~/music"),
+      "player" => "mpv",
+      "index-autobuild" => 86400,
+      "deep-index" => false,
+      "jukebox-size" => 100,
+
+      # client/daemon defaults
+      "daemon-port" => 2669,
+      "daemon-host" => "localhost",
+    }.freeze
+
     if File.exist?(CONFIG_FILE)
-      @config = YAML::load_file(CONFIG_FILE)
+      user_config = YAML::load_file(CONFIG_FILE)
     else
-      @config = {
-        "debug" => false,
-        "verbose" => true,
-        "music" => File.expand_path("~/music"),
-        "player" => "mpv",
-        "index-autobuild" => 86400,
-        "deep-index" => false,
-        "jukebox-size" => 100
-      }
+      user_config = DEFAULT_CONFIG
 
       [CONFIG_DIR, PLAYLIST_DIR, USER_PLUGIN_DIR, USER_COMMAND_DIR].each do |d|
         FileUtils.mkdir_p d
@@ -48,6 +55,8 @@ module Muzak
 
       sync!
     end
+
+    @config = DEFAULT_CONFIG.merge(user_config)
 
     @config.each do |key, _|
       define_singleton_method Utils.resolve_command(key) do

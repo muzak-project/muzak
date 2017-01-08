@@ -32,7 +32,7 @@ module Muzak
         return unless outdated?
       end
 
-      build!(sync)
+      build!(sync: sync)
     end
 
     # Synchronize the in-memory index hash with {Muzak::INDEX_FILE}.

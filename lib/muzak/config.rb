@@ -10,6 +10,25 @@ module Muzak
   #   Config.art_geometry # => "300x300"
   # @see file:CONFIGURATION.md User Configuration
   class Config
+    # Catches all undefined configuration keys and defaults them to false.
+    # @return [false]
+    def self.method_missing(method, *args)
+      false
+    end
+
+    # Synchronizes the in-memory configuration with {CONFIG_FILE}.
+    # @return [void]
+    def self.sync!
+      File.open(CONFIG_FILE, "w") { |io| io.write @config.to_yaml }
+    end
+
+    # @return [Boolean] whether or not the given plugin is configured
+    # @note the truth-value of this method is used to determine which
+    #   plugins should be loaded.
+    def self.plugin?(pname)
+      respond_to? "plugin_#{pname}"
+    end
+
     if File.exist?(CONFIG_FILE)
       @config = YAML::load_file(CONFIG_FILE)
     else
@@ -39,25 +58,6 @@ module Muzak
         @config[key] = value
         sync!
       end
-    end
-
-    # Catches all undefined configuration keys and defaults them to false.
-    # @return [false]
-    def self.method_missing(method, *args)
-      false
-    end
-
-    # Synchronizes the in-memory configuration with {CONFIG_FILE}.
-    # @return [void]
-    def self.sync!
-      File.open(CONFIG_FILE, "w") { |io| io.write @config.to_yaml }
-    end
-
-    # @return [Boolean] whether or not the given plugin is configured
-    # @note the truth-value of this method is used to determine which
-    #   plugins should be loaded.
-    def self.plugin?(pname)
-      respond_to? "plugin_#{pname}"
     end
   end
 end

@@ -6,8 +6,8 @@ require "json"
 require "shellwords"
 
 begin
-  server_host = Muzak::Config.daemon_host
-  server_port = Muzak::Config.daemon_port
+  server_host = Muzak::Config.daemon_host || "localhost"
+  server_port = Muzak::Config.daemon_port || 2669
   sock = TCPSocket.new server_host, server_port
 rescue
   error = { response: { error: "muzak is not running" } }.to_json

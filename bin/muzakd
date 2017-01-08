@@ -11,8 +11,7 @@ Thread.abort_on_exception = Muzak::Config.debug
 
 muzak = Muzak::Instance.new
 
-server_port = Muzak::Config.daemon_port || 2669
-server = TCPServer.new server_port
+server = TCPServer.new Muzak::Config.daemon_port
 
 loop do
   Thread.new(server.accept) do |client|

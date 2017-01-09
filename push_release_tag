@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+require_relative "./lib/muzak"
+
+git_tags = `git tag`.split("\n")
+
+if git_tags.include?(Muzak::VERSION)
+  puts "Did you forget to update Muzak::VERSION?"
+  exit
+end
+
+`git tag #{Muzak::VERSION}`
+`git push origin #{Muzak::VERSION}`
+`gem build muzak`
+`gem push muzak-#{Muzak::VERSION}.gem`

@@ -35,8 +35,6 @@ module Muzak
       "verbose" => true,
       "music" => File.expand_path("~/music"),
       "player" => "mpv",
-      "index-autobuild" => 86400,
-      "deep-index" => false,
       "jukebox-size" => 100,
 
       # client/daemon defaults

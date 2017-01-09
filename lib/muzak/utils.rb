@@ -22,14 +22,14 @@ module Muzak
     # Tests whether the given filename is likely to be music.
     # @param filename [String] the filename to test
     # @return [Boolean] whether or not the file is a music file
-    def music?(filename)
+    def self.music?(filename)
       [".mp3", ".flac", ".m4a", ".wav", ".ogg", ".oga", ".opus"].include?(File.extname(filename.downcase))
     end
 
     # Tests whether the given filename is likely to be album art.
     # @param filename [String] the filename to test
     # @return [Boolean] whether or not the file is an art file
-    def album_art?(filename)
+    def self.album_art?(filename)
       File.basename(filename) =~ /(cover)|(folder).(jpg)|(png)/i
     end
 

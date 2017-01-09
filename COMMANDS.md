@@ -324,39 +324,6 @@ $ muzak-cmd help
 }
 ```
 
-## `index-build`
-
-(Re-)builds the index.
-
-**Note:** This command can take quite some time to run. It's generally a good
-idea to either set `index-autobuild` in the configuration to do automatic
-rebuilds or schedule this command via `cron` or a similar tool.
-
-### Syntax
-
-`index-build`
-
-### Example
-
-```bash
-$ muzak-cmd index-build
-```
-
-### Example Response
-
-```json
-{
-   "response" : {
-     "error" : null,
-     "method" : "index_build",
-     "data" : {
-       "artists" : 10,
-       "albums": 100
-     }
-   }
-}
-```
-
 ## `jukebox`
 
 Adds *N* random songs to the player's queue, where *N* is either the optional

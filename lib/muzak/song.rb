@@ -60,7 +60,7 @@ module Muzak
     def best_guess_album_art
       album_dir = File.dirname(path)
 
-      art = Dir.entries(album_dir).find { |ent| album_art?(ent) }
+      art = Dir.entries(album_dir).find { |ent| Utils.album_art?(ent) }
       File.join(album_dir, art) unless art.nil?
     end
 

@@ -1,19 +1,5 @@
 module Muzak
   module Cmd
-    # Rebuild the current instance's index.
-    # @command `index-build`
-    # @cmdexample `muzak> index-build`
-    def index_build(*args)
-      verbose "building a new index, this may take a while"
-
-      index.build!
-
-      build_response data: {
-        artists: index.artists.size,
-        albums: index.albums.size
-      }
-    end
-
     # List all artists in the index.
     # @command `list-artists`
     # @cmdexample `muzak> list-artists`

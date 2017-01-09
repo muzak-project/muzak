@@ -34,7 +34,6 @@ Muzak::Config.music # => "/home/william/mnt/fortuna/music/"
 Muzak::Config.player # => "mpv"
 Muzak::Config.art_geometry # => "300x300"
 Muzak::Config.jukebox_size # => 100
-Muzak::Config.deep_index # => true
 ```
 
 Since {Muzak::Config} is populated whenever `muzak` is loaded via `require`,
@@ -118,36 +117,6 @@ initialize and control.
 
 The short names of supported players can be found in
 {Muzak::Player::PLAYER_MAP}.
-
-### `index-autobuild`
-
-*Optional.*
-
-*Default:* `86400`
-
-`index-autobuild: <span>` should be set to maximum number of seconds before
-an index is considered outdated (based on its {Muzak::Index#timestamp} field).
-
-When an outdated index is loaded and this key is set, muzak will automatically
-rebuild the index.
-
-**Note:** This is *not* an interval - the outdated index is only rebuilt
-when a new {Muzak::Instance} or {Muzak::Index} is instantiated.
-
-### `deep-index`
-
-*Optional.*
-
-*Default:* `false`
-
-If `deep-index: true` is set in the configuration file, then muzak will
-build a "deep" index. This involves opening each music file and reading metadata
-from it, which can take substantially longer than just a shallow filesystem
-index.
-
-This primary benefit of this is caching - having all the song metadata in the
-index allows muzak to make fewer disk accesses, which may be expensive over
-a remote disk.
 
 ### `jukebox-size`
 

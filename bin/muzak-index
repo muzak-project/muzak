@@ -1,0 +1,106 @@
+#!/usr/bin/env ruby
+
+require "muzak"
+
+VERSION = 1
+
+OPTS = {
+  deep: ARGV.delete("--deep") || ARGV.delete("-d"),
+  verbose: ARGV.delete("--verbose") || ARGV.delete("-V"),
+  help: ARGV.delete("--help") || ARGV.delete("-h"),
+  version: ARGV.delete("--version") || ARGV.delete("-v")
+}
+
+def help
+  puts <<~EOS
+    Usage: #{$PROGRAM_NAME} [options] <tree> [index]
+
+    Options:
+      --deep, -d      Build a "deep" index (contains metadata)
+      --verbose, -V   Be verbose while indexing
+      --help, -h      Print this help message
+      --version, -v   Print version information
+
+    Arguments:
+      [tree]          The filesystem tree to index (default: ~/music)
+      [index]         The saved index (default: ~/.config/muzak/index.dat)
+  EOS
+
+  exit
+end
+
+def version
+  puts "muzak-index version #{VERSION}."
+
+  exit
+end
+
+def info(msg)
+  puts "[\e[32minfo\e[0m]: #{msg}" if OPTS[:verbose]
+end
+
+def bail(msg)
+  STDERR.puts "[\e[31merror\e[0m]: #{msg}"
+  exit 1
+end
+
+help if OPTS[:help]
+version if OPTS[:version]
+
+tree = ARGV.shift || Muzak::Config.music
+bail "missing or invalid tree: <tree>" unless tree && File.exist?(tree)
+
+index_file = ARGV.shift || Muzak::INDEX_FILE
+
+index_hash = {
+  "tree" => tree,
+  "timestamp" => Time.now.to_i,
+  "artists" => {},
+  "deep" => OPTS[:deep]
+}
+
+Dir.entries(tree).each do |artist|
+  next unless File.directory?(File.join(tree, artist))
+  next if artist.start_with?(".")
+
+  info "indexing '#{artist}'..."
+
+  index_hash["artists"][artist] = {}
+  index_hash["artists"][artist]["albums"] = {}
+
+  Dir.entries(File.join(tree, artist)).each do |album|
+    next if album.start_with?(".")
+
+    info "\tindexing '#{album}'..."
+
+    index_hash["artists"][artist]["albums"][album] = {}
+    index_hash["artists"][artist]["albums"][album]["songs"] = []
+    index_hash["artists"][artist]["albums"][album]["deep-songs"] = []
+
+    Dir.glob(File.join(tree, artist, album, "**")) do |file|
+      index_hash["artists"][artist]["albums"][album]["cover"] = file if Muzak::Utils.album_art?(file)
+
+      if Muzak::Utils.music?(file)
+        index_hash["artists"][artist]["albums"][album]["songs"] << file
+        if OPTS[:deep]
+          index_hash["artists"][artist]["albums"][album]["deep-songs"] << Muzak::Song.new(file)
+        end
+      end
+    end
+
+    index_hash["artists"][artist]["albums"][album]["songs"].sort!
+
+    # if any of the track numbers in the album are > 0 (the fallback),
+    # sort by ID3 track numbers. otherwise, hope that the song
+    # paths contain track numbers (e.g, "01 song.mp3").
+    if index_hash["artists"][artist]["albums"][album]["deep-songs"].any? { |s| s.track > 0 }
+      index_hash["artists"][artist]["albums"][album]["deep-songs"].sort_by!(&:track)
+    else
+      index_hash["artists"][artist]["albums"][album]["deep-songs"].sort_by!(&:path)
+    end
+  end
+end
+
+File.open(index_file, "w") { |io| io.write Marshal.dump index_hash }
+
+info "all done."

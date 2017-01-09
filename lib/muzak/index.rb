@@ -4,7 +4,11 @@ module Muzak
     include Utils
 
     def self.load_index!
-      Index.new(Config.music, deep: Config.deep_index)
+      if File.exist?(INDEX_FILE)
+        Index.new
+      else
+        error! "#{INDEX_FILE} missing, did you forget to run muzak-index?"
+      end
     end
 
     # @return [String] the path of the root of the music tree
@@ -16,39 +20,10 @@ module Muzak
     # @return [Hash] the index hash
     attr_accessor :hash
 
-    # @param tree [String] the root to begin indexing from
-    # @param deep [Boolean] whether to build a "deep" index
-    # @param sync [Boolean] whether or not to save to {Muzak::INDEX_FILE}
-    # @note if the index ({Muzak::INDEX_FILE}) already exists and is not
-    #   outdated, no building is performed.
-    # @see #build!
-    def initialize(tree, deep: false, sync: true)
-      @tree = tree
-      @deep = deep
-
-      if File.exist?(INDEX_FILE)
-        verbose "loading index from #{INDEX_FILE}"
-        @hash = Marshal::load(File.read INDEX_FILE)
-        return unless outdated?
-      end
-
-      build!(sync: sync)
-    end
-
-    # Synchronize the in-memory index hash with {Muzak::INDEX_FILE}.
-    def sync!
-      File.open(INDEX_FILE, "w") { |io| io.write Marshal::dump @hash }
-    end
-
-    # (Re)builds and saves the index ({Muzak::INDEX_FILE}) to disk.
-    # @param sync [Boolean] whether or not to save to {Muzak::INDEX_FILE}
-    # @note This method can be expensive.
-    def build!(sync: true)
-      @hash = build_index_hash!
-
-      debug "indexed #{albums.length} albums by #{artists.length} artists"
-
-      sync! if sync
+    # @param index_file [String] the path of the index data file
+    def initialize(file: INDEX_FILE)
+      @hash = Marshal.load(File.read file)
+      @deep = @hash["deep"]
     end
 
     # @return [Boolean] whether or not the current index is deep
@@ -59,14 +34,6 @@ module Muzak
     # @return [Integer] the UNIX timestamp from when the index was built
     def timestamp
       @hash["timestamp"]
-    end
-
-    # @return [Boolean] whether or not the index is currently out of date
-    # @note The behavior of this method is affected by the value of
-    #   {Muzak::Config.index_autobuild}.
-    def outdated?
-      return false unless Config.index_autobuild
-      Time.now.to_i - timestamp >= Config.index_autobuild
     end
 
     # @return [Array<String>] a list of all artists in the index
@@ -137,56 +104,6 @@ module Muzak
       rescue Exception => e
         []
       end
-    end
-
-    private
-
-    def build_index_hash!
-      index_hash = {
-        "timestamp" => Time.now.to_i,
-        "artists" => {},
-        "deep" => deep
-      }
-
-      Dir.entries(tree).each do |artist|
-        next unless File.directory?(File.join(tree, artist))
-        next if artist.start_with?(".")
-
-        index_hash["artists"][artist] = {}
-        index_hash["artists"][artist]["albums"] = {}
-
-        Dir.entries(File.join(tree, artist)).each do |album|
-          next if album.start_with?(".")
-
-          index_hash["artists"][artist]["albums"][album] = {}
-          index_hash["artists"][artist]["albums"][album]["songs"] = []
-          index_hash["artists"][artist]["albums"][album]["deep-songs"] = []
-
-          Dir.glob(File.join(tree, artist, album, "**")) do |file|
-            index_hash["artists"][artist]["albums"][album]["cover"] = file if album_art?(file)
-
-            if music?(file)
-              index_hash["artists"][artist]["albums"][album]["songs"] << file
-              if deep?
-                index_hash["artists"][artist]["albums"][album]["deep-songs"] << Song.new(file)
-              end
-            end
-          end
-
-          index_hash["artists"][artist]["albums"][album]["songs"].sort!
-
-          # if any of the track numbers in the album are > 0 (the fallback),
-          # sort by ID3 track numbers. otherwise, hope that the song
-          # paths contain track numbers (e.g, "01 song.mp3").
-          if index_hash["artists"][artist]["albums"][album]["deep-songs"].any? { |s| s.track > 0 }
-            index_hash["artists"][artist]["albums"][album]["deep-songs"].sort_by!(&:track)
-          else
-            index_hash["artists"][artist]["albums"][album]["deep-songs"].sort_by!(&:path)
-          end
-        end
-      end
-
-      index_hash
     end
   end
 end

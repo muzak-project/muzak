@@ -14,21 +14,17 @@ module Muzak
     # @return [String] the path of the root of the music tree
     attr_accessor :tree
 
-    # @return [Boolean] whether the index is "deep" (includes metadata) or not
-    attr_accessor :deep
-
     # @return [Hash] the index hash
     attr_accessor :hash
 
     # @param index_file [String] the path of the index data file
     def initialize(file: INDEX_FILE)
       @hash = Marshal.load(File.read file)
-      @deep = @hash["deep"]
     end
 
     # @return [Boolean] whether or not the current index is deep
     def deep?
-      deep
+      @hash[deep]
     end
 
     # @return [Integer] the UNIX timestamp from when the index was built

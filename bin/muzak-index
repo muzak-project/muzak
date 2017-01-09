@@ -5,10 +5,10 @@ require "muzak"
 VERSION = 1
 
 OPTS = {
-  deep: ARGV.delete("--deep") || ARGV.delete("-d"),
-  verbose: ARGV.delete("--verbose") || ARGV.delete("-V"),
-  help: ARGV.delete("--help") || ARGV.delete("-h"),
-  version: ARGV.delete("--version") || ARGV.delete("-v")
+  deep: !!(ARGV.delete("--deep") || ARGV.delete("-d")),
+  verbose: !!(ARGV.delete("--verbose") || ARGV.delete("-V")),
+  help: !!(ARGV.delete("--help") || ARGV.delete("-h")),
+  version: !!(ARGV.delete("--version") || ARGV.delete("-v"))
 }
 
 def help

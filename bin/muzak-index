@@ -55,23 +55,20 @@ index_file = ARGV.shift || Muzak::INDEX_FILE
 index_hash = {
   "tree" => tree,
   "timestamp" => Time.now.to_i,
-  "artists" => {},
   "deep" => OPTS[:deep]
 }
 
-Dir.entries(tree).each do |artist|
-  next unless File.directory?(File.join(tree, artist))
-  next if artist.start_with?(".")
+artist_names = Dir.entries(tree).reject! { |ent| ent.start_with?(".") }
 
-  info "indexing '#{artist}'..."
+index_hash["artists"] = artist_names.map do |artist|
+  [artist, { "albums" => {} }]
+end.to_h
 
-  index_hash["artists"][artist] = {}
-  index_hash["artists"][artist]["albums"] = {}
-
+artist_names.each do |artist|
   Dir.entries(File.join(tree, artist)).each do |album|
     next if album.start_with?(".")
 
-    info "\tindexing '#{album}'..."
+    info "indexing '#{artist}' - '#{album}'..."
 
     album_hash = {}
     album_hash["songs"] = []

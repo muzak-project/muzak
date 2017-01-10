@@ -73,31 +73,33 @@ Dir.entries(tree).each do |artist|
 
     info "\tindexing '#{album}'..."
 
-    index_hash["artists"][artist]["albums"][album] = {}
-    index_hash["artists"][artist]["albums"][album]["songs"] = []
-    index_hash["artists"][artist]["albums"][album]["deep-songs"] = []
+    album_hash = {}
+    album_hash["songs"] = []
+    album_hash["deep-songs"] = []
 
     Dir.glob(File.join(tree, artist, album, "**")) do |file|
-      index_hash["artists"][artist]["albums"][album]["cover"] = file if Muzak::Utils.album_art?(file)
+      album_hash["cover"] = file if Muzak::Utils.album_art?(file)
 
       if Muzak::Utils.music?(file)
-        index_hash["artists"][artist]["albums"][album]["songs"] << file
+        album_hash["songs"] << file
         if OPTS[:deep]
-          index_hash["artists"][artist]["albums"][album]["deep-songs"] << Muzak::Song.new(file)
+          album_hash["deep-songs"] << Muzak::Song.new(file)
         end
       end
     end
 
-    index_hash["artists"][artist]["albums"][album]["songs"].sort!
+    album_hash["songs"].sort!
 
     # if any of the track numbers in the album are > 0 (the fallback),
     # sort by ID3 track numbers. otherwise, hope that the song
     # paths contain track numbers (e.g, "01 song.mp3").
-    if index_hash["artists"][artist]["albums"][album]["deep-songs"].any? { |s| s.track > 0 }
-      index_hash["artists"][artist]["albums"][album]["deep-songs"].sort_by!(&:track)
+    if album_hash["deep-songs"].any? { |s| s.track > 0 }
+      album_hash["deep-songs"].sort_by!(&:track)
     else
-      index_hash["artists"][artist]["albums"][album]["deep-songs"].sort_by!(&:path)
+      album_hash["deep-songs"].sort_by!(&:path)
     end
+
+    index_hash["artists"][artist]["albums"][album] = album_hash
   end
 end
 

@@ -33,6 +33,15 @@ module Muzak
       File.basename(filename) =~ /(cover)|(folder).(jpg)|(png)/i
     end
 
+    # Tests whether the given utility is available in the system path.
+    # @param util [String] the utility to test
+    # @return [Boolean] whether or not the utility is available
+    def self.which?(util)
+      ENV["PATH"].split(File::PATH_SEPARATOR).any? do |path|
+        File.executable?(File.join(path, util))
+      end
+    end
+
     # @return [Boolean] whether or not muzak is running in debug mode
     def debug?
       Config.debug
@@ -79,7 +88,8 @@ module Muzak
     # @param args [Array<String>] the message(s)
     # @return [void]
     def error(*args)
-      output pretty(:red, "error"), "[#{self.class.name}]", args
+      context = self.is_a?(Module) ? name : self.class.name
+      output pretty(:red, "error"), "[#{context}]", args
     end
 
     # Outputs a boxed error message and then exits.
@@ -95,8 +105,8 @@ module Muzak
     # @return [void]
     def debug(*args)
       return unless debug?
-
-      output pretty(:yellow, "debug"), "[#{self.class.name}]", args
+      context = self.is_a?(Module) ? name : self.class.name
+      output pretty(:yellow, "debug"), "[#{context}]", args
     end
 
     # Outputs a boxed verbose message.

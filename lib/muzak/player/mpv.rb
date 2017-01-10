@@ -7,6 +7,11 @@ module Muzak
   module Player
     # Exposes MPV's IPC to muzak for playback control.
     class MPV < StubPlayer
+      # @return [Boolean] Whether or not MPV is available for execution
+      def self.available?
+        Utils.which?("mpv")
+      end
+
       # @return [Boolean] Whether or not the current instance is running.
       def running?
         begin

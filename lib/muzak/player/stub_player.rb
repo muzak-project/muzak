@@ -7,6 +7,11 @@ module Muzak
       # @return [Instance] the instance associated with this player
       attr_reader :instance
 
+      # @return [true] whether or not this type of player is available
+      def self.available?
+        true
+      end
+
       # @param instance [Instance] the instance associated with the player
       def initialize(instance)
         @instance = instance

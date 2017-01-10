@@ -24,7 +24,7 @@ module Muzak
 
     # @return [Boolean] whether or not the current index is deep
     def deep?
-      @hash[deep]
+      @hash["deep"]
     end
 
     # @return [Integer] the UNIX timestamp from when the index was built

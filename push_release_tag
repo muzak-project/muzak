@@ -9,7 +9,9 @@ if git_tags.include?(Muzak::VERSION)
   exit
 end
 
-`git tag #{Muzak::VERSION}`
-`git push origin #{Muzak::VERSION}`
-`gem build muzak`
-`gem push muzak-#{Muzak::VERSION}.gem`
+system "git tag #{Muzak::VERSION}"
+system "git push origin #{Muzak::VERSION}"
+system "gem build muzak"
+system "gem push muzak-#{Muzak::VERSION}.gem"
+
+File.delete("muzak-#{Muzak::VERSION}.gem")

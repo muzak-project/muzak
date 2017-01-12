@@ -228,7 +228,7 @@ module Muzak
             else
               @result_queue << response
             end
-          rescue EOFError # the player is deactivating
+          rescue EOFError, IOError # the player is deactivating
             Thread.exit
           end
         end

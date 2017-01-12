@@ -76,8 +76,10 @@ module Muzak
       full
     end
 
+    # @return [Boolean] whether or not the given object is equal to this one
+    # @note compares song paths, not metadata
     def ==(other)
-      path == other.path
+      other.is_a?(Song) && path == other.path
     end
   end
 end

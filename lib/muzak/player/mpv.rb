@@ -35,6 +35,8 @@ module Muzak
           # these two flags disable mpv's video output entirely
           # "--no-force-window",
           # "--no-video",
+          # there's also this, which (might) also work
+          # "--audio-display=no",
           "--no-osc",
           "--no-osd-bar",
           "--no-input-default-bindings",

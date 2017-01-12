@@ -80,6 +80,7 @@ module Muzak
 
         @socket.close
       ensure
+        @_now_playing = nil
         instance.event :player_deactivated
         File.delete(@sock_path) if @sock_path && File.exists?(@sock_path)
       end

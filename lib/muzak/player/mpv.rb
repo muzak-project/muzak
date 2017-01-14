@@ -214,7 +214,7 @@ module Muzak
         loop do
           begin
             @socket.puts(@command_queue.pop)
-          rescue EOFError # the player is deactivating
+          rescue # the player is deactivating
             Thread.exit
           end
         end
@@ -230,7 +230,7 @@ module Muzak
             else
               @result_queue << response
             end
-          rescue EOFError, IOError # the player is deactivating
+          rescue # the player is deactivating
             Thread.exit
           end
         end

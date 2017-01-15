@@ -119,9 +119,7 @@ module Muzak
     def jukebox(count = Config.jukebox_size)
       songs = index.jukebox(count.to_i)
 
-      Thread.new do
-        songs.each { |s| player.enqueue_song s }
-      end
+      songs.each { |s| player.enqueue_song s }
 
       build_response data: {
         jukebox: songs.map(&:full_title)

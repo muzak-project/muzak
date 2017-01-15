@@ -170,8 +170,6 @@ module Muzak
       # Get mpv's currently loaded song.
       # @return [Song, nil] the currently loaded song
       def now_playing
-        path = @mpv.get_property "path"
-        return if path&.empty?
         @_now_playing ||= Song.new(@mpv.get_property "path")
       end
 

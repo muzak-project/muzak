@@ -137,7 +137,7 @@ module Muzak
       # @return [Array<Song>] all songs in mpv's queue
       # @note This includes songs already played.
       def list_queue
-        entries = get_property "playlist/count"
+        entries = @mpv.get_property "playlist/count"
 
         playlist = []
 

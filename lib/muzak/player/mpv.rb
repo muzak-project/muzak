@@ -2,6 +2,7 @@ require "tempfile"
 require "socket"
 require "json"
 require "thread"
+require "mpv"
 
 module Muzak
   module Player
@@ -14,11 +15,7 @@ module Muzak
 
       # @return [Boolean] Whether or not the current instance is running.
       def running?
-        begin
-          !!@pid && Process.waitpid(@pid, Process::WNOHANG).nil?
-        rescue Errno::ECHILD
-          false
-        end
+        @mpv&.running?
       end
 
       # Activate mpv by executing it and preparing for event processing.
@@ -28,9 +25,7 @@ module Muzak
 
         debug "activating #{self.class}"
 
-        @sock_path = Dir::Tmpname.make_tmpname("/tmp/mpv", ".sock")
         mpv_args = [
-          "--idle",
           # if i get around to separating album art from playback,
           # these two flags disable mpv's video output entirely
           # "--no-force-window",
@@ -41,28 +36,13 @@ module Muzak
           "--no-osd-bar",
           "--no-input-default-bindings",
           "--no-input-cursor",
-          "--no-terminal",
           "--load-scripts=no", # autoload and other scripts with clobber our mpv management
-          "--input-ipc-server=%{socket}" % { socket: @sock_path }
         ]
 
         mpv_args << "--geometry=#{Config.art_geometry}" if Config.art_geometry
 
-        @pid = Process.spawn("mpv", *mpv_args)
-
-        until File.exists?(@sock_path)
-          sleep 0.1
-        end
-
-        @socket = UNIXSocket.new(@sock_path)
-
-        @command_queue = Queue.new
-        @result_queue = Queue.new
-        @event_queue = Queue.new
-
-        @command_thread = Thread.new { pump_commands! }
-        @results_thread = Thread.new { pump_results! }
-        @events_thread = Thread.new { dispatch_events! }
+        @mpv = ::MPV::Session.new(user_args: mpv_args)
+        @mpv.callbacks << ::MPV::Callback.new(self, :dispatch_event!)
 
         instance.event :player_activated
       end
@@ -74,17 +54,10 @@ module Muzak
 
         debug "deactivating #{self.class}"
 
-        command "quit"
-
-        Process.kill :TERM, @pid
-        Process.wait @pid
-        @pid = nil
-
-        @socket.close
+        @mpv.quit!
       ensure
         @_now_playing = nil
         instance.event :player_deactivated
-        File.delete(@sock_path) if @sock_path && File.exists?(@sock_path)
       end
 
       # Tell mpv to begin playback.
@@ -93,7 +66,7 @@ module Muzak
       def play
         return unless running?
 
-        set_property "pause", false
+        @mpv.set_property "pause", false
       end
 
       # Tell mpv to pause playback.
@@ -102,28 +75,28 @@ module Muzak
       def pause
         return unless running?
 
-        set_property "pause", true
+        @mpv.set_property "pause", true
       end
 
       # @return [Boolean] Whether or not mpv is currently playing.
       def playing?
         return false unless running?
 
-        !get_property "pause"
+        !@mpv.get_property "pause"
       end
 
       # Tell mpv to play the next song in its queue.
       # @return [void]
       # @note Does nothing if the current song is the last.
       def next_song
-        command "playlist-next"
+        @mpv.command "playlist-next"
       end
 
       # Tell mpv to play the previous song in its queue.
       # @return [void]
       # @note Does nothing if the current song is the first.
       def previous_song
-        command "playlist-prev"
+        @mpv.command "playlist-prev"
       end
 
       # Tell mpv to add the given song to its queue.
@@ -172,7 +145,7 @@ module Muzak
           # TODO: this is slow and should be avoided at all costs,
           # since we have access to these Song instances earlier
           # in the object's lifecycle.
-          playlist << Song.new(get_property("playlist/#{i}/filename"))
+          playlist << Song.new(@mpv.get_property("playlist/#{i}/filename"))
         end
 
         playlist
@@ -183,7 +156,7 @@ module Muzak
       def shuffle_queue
         return unless running?
 
-        command "playlist-shuffle"
+        @mpv.command "playlist-shuffle"
       end
 
       # Clears mpv's internal queue.
@@ -191,87 +164,40 @@ module Muzak
       def clear_queue
         return unless running?
 
-        command "playlist-clear"
+        @mpv.command "playlist-clear"
       end
 
       # Get mpv's currently loaded song.
       # @return [Song, nil] the currently loaded song
       def now_playing
-        path = get_property "path"
+        path = @mpv.get_property "path"
         return if path&.empty?
-        @_now_playing ||= Song.new(get_property "path")
+        @_now_playing ||= Song.new(@mpv.get_property "path")
       end
 
-      private
-
+      # Load a song and optional album art into mpv.
+      # @param song [Song] the song to load
+      # @param art [String] the art file to load
+      # @return [void]
+      # @api private
       def load_song(song, art)
         cmds = ["loadfile", song.path, "append-play"]
         cmds << "external-file=\"#{art}\"" if art
-        command *cmds
+        @mpv.command *cmds
       end
 
-      def pump_commands!
-        loop do
-          begin
-            @socket.puts(@command_queue.pop)
-          rescue # the player is deactivating
-            Thread.exit
-          end
+      # Dispatch the given event to the active {Muzak::Instance}.
+      # @param event [String] the event
+      # @return [void]
+      # @api private
+      def dispatch_event!(event)
+        case event
+        when "file-loaded"
+          instance.event :song_loaded, now_playing
+        when "end-file"
+          instance.event :song_unloaded
+          @_now_playing = nil
         end
-      end
-
-      def pump_results!
-        loop do
-          begin
-            response = JSON.parse(@socket.readline)
-
-            if response["event"]
-              @event_queue << response["event"]
-            else
-              @result_queue << response
-            end
-          rescue # the player is deactivating
-            Thread.exit
-          end
-        end
-      end
-
-      def dispatch_events!
-        loop do
-          event = @event_queue.pop
-
-          Thread.new do
-            case event
-            when "file-loaded"
-              instance.event :song_loaded, now_playing
-            when "end-file"
-              instance.event :song_unloaded
-              @_now_playing = nil
-            end
-          end
-        end
-      end
-
-      def command(*args)
-        return unless running?
-
-        payload = {
-          "command" => args
-        }
-
-        debug "mpv payload: #{payload.to_s}"
-
-        @command_queue << JSON.generate(payload)
-
-        @result_queue.pop
-      end
-
-      def set_property(*args)
-        command "set_property", *args
-      end
-
-      def get_property(*args)
-        command("get_property", *args)["data"]
       end
     end
   end

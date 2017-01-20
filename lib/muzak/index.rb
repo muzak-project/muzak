@@ -45,7 +45,12 @@ module Muzak
 
         artists.each do |a|
           @hash["artists"][a]["albums"].each do |title, album_hash|
-            albums_hash[title] = Album.new(title, album_hash)
+            if deep?
+              songs = album_hash["deep-songs"]
+            else
+              songs = album_hash["songs"].map { |s| Song.new(s) }
+            end
+            albums_hash[title] = Album.new(title, songs, album_hash["cover"])
           end
         end
 
@@ -64,7 +69,14 @@ module Muzak
     # @return [Array<Album>] all albums by the given artist
     def albums_by(artist)
       if artists.include?(artist)
-        @hash["artists"][artist]["albums"].map { |title, album| Album.new(title, album) }
+        @hash["artists"][artist]["albums"].map do |title, album_hash|
+          if deep?
+            songs = album_hash["deep-songs"]
+          else
+            songs = album_hash["songs"].map { |s| Song.new(s) }
+          end
+          Album.new(title, songs, album_hash["cover"])
+        end
       else
         error "no such artist: '#{artist}'" unless @hash["artists"].key?(artist)
         []

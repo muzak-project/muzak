@@ -10,17 +10,13 @@ module Muzak
     # @return [String] the path to the album's cover art
     attr_reader :cover_art
 
-    # @note instead of passing an album hash directly from the index, this
-    #   should really just take a title and an array of Song objects.
-    def initialize(title, album_hash)
+    # @param title [String] the album's title
+    # @param songs [Array<Song>] the album's songs
+    # @param cover_art [String] the album's cover art
+    def initialize(title, songs, cover_art = nil)
       @title = title
-      @cover_art = album_hash["cover"]
-
-      unless album_hash["deep-songs"].empty?
-        @songs = album_hash["deep-songs"]
-      else
-        @songs = album_hash["songs"].map { |s| Song.new(s) }
-      end
+      @songs = songs
+      @cover_art = cover_art
     end
   end
 end

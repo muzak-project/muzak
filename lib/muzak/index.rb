@@ -3,6 +3,7 @@ module Muzak
   class Index
     include Utils
 
+    # @return [Index] a {Index} instance instantiated with {INDEX_FILE}
     def self.load_index!
       if File.exist?(INDEX_FILE)
         Index.new
@@ -17,7 +18,7 @@ module Muzak
     # @return [Hash] the index hash
     attr_accessor :hash
 
-    # @param index_file [String] the path of the index data file
+    # @param file [String] the path of the index data file
     def initialize(file: INDEX_FILE)
       debug "loading index from '#{INDEX_FILE}'..."
 

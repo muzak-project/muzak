@@ -1,4 +1,5 @@
 module Muzak
+  # Represents a sequential list of songs for muzak.
   class Playlist
     # @return [String] the absolute path to the playlist on disk
     attr_accessor :filename

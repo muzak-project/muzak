@@ -29,6 +29,7 @@ module Muzak
       respond_to? "plugin_#{pname}"
     end
 
+    # The default configuration keys and values.
     DEFAULT_CONFIG = {
       # core defaults
       "debug" => false,

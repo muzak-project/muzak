@@ -10,7 +10,7 @@ module Muzak
     # @param pname [String] the playlist's name
     # @return [String] the absolute path to the given playlist name
     def self.path_for(pname)
-      File.join(PLAYLIST_DIR, pname) + ".yml"
+      File.join(Config::PLAYLIST_DIR, pname) + ".yml"
     end
 
     # @param pname [String] the playlist's name
@@ -30,7 +30,7 @@ module Muzak
 
     # @return [Array<String>] the names of all currently available playlists
     def self.playlist_names
-      Dir.entries(PLAYLIST_DIR).reject do |ent|
+      Dir.entries(Config::PLAYLIST_DIR).reject do |ent|
         ent.start_with?(".")
       end.map do |ent|
         File.basename(ent, File.extname(ent))

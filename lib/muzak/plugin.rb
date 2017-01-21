@@ -8,7 +8,7 @@ module Muzak
   # The namespace for muzak plugins.
   module Plugin
     # load plugins included by the user
-    Dir.glob(File.join(USER_PLUGIN_DIR, "*")) { |file| require file }
+    Dir.glob(File.join(Config::USER_PLUGIN_DIR, "*")) { |file| require file }
 
     # @return [Array<Class>] all plugin classes visible under Plugin
     def self.plugin_classes

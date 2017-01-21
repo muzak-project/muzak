@@ -1,36 +1,18 @@
 module Muzak
   # A collection of convenience utilities for use throughout muzak.
   module Utils
-    # Convert the given command into a method (kebab to camel case).
-    # @param cmd [String] the command to convert
-    # @return [String] the method corresponding to the command
-    # @example
-    #   resolve_command "do-something" # => "do_something"
-    def self.resolve_command(cmd)
-      cmd.tr "-", "_"
-    end
-
-    # Convert the given method into a command (camel to kebab case).
-    # @param meth [String, Symbol] the method to convert
-    # @return [String] the command corresponding to the method
-    # @example
-    #   resolve_method "do_something" # => "do-something"
-    def self.resolve_method(meth)
-      meth.to_s.tr "_", "-"
-    end
-
     # Tests whether the given filename is likely to be music.
     # @param filename [String] the filename to test
     # @return [Boolean] whether or not the file is a music file
     def self.music?(filename)
-      [".mp3", ".flac", ".m4a", ".wav", ".ogg", ".oga", ".opus"].include?(File.extname(filename.downcase))
+      Config::MUSIC_SUFFIXES.include?(File.extname(filename.downcase))
     end
 
     # Tests whether the given filename is likely to be album art.
     # @param filename [String] the filename to test
     # @return [Boolean] whether or not the file is an art file
     def self.album_art?(filename)
-      File.basename(filename) =~ /(cover)|(folder).(jpg)|(png)/i
+      File.basename(filename) =~ Config::ALBUM_ART_REGEX
     end
 
     # Tests whether the given utility is available in the system path.
@@ -80,7 +62,7 @@ module Muzak
     # Outputs a boxed warning message.
     # @param args [Array<String>] the message(s)
     # @return [void]
-    def warn(*args)
+    def danger(*args)
       output pretty(:yellow, "warn"), args
     end
 

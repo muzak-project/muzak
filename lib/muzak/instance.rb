@@ -12,7 +12,7 @@ module Muzak
     #   instance.command "pause"
     def command(cmd, *args)
       if Cmd.commands.include?(cmd)
-        meth = method(Utils.resolve_command(cmd))
+        meth = method(Config.resolve_command(cmd))
         if meth.arity == args.size || meth.arity <= -1
           meth.call *args
         else
@@ -57,9 +57,9 @@ module Muzak
     # Dispatch an event to all plugins.
     # @param type [Symbol] the type of event to dispatch
     # @param args [Array] the event's arguments
-    # @note {Muzak::PLUGIN_EVENTS} contains all valid events.
+    # @note {Config::PLUGIN_EVENTS} contains all valid events.
     def event(type, *args)
-      return unless PLUGIN_EVENTS.include?(type)
+      return unless Config::PLUGIN_EVENTS.include?(type)
 
       plugins.each do |plugin|
         Thread.new do

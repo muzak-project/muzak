@@ -8,8 +8,8 @@ For the developer documentation, see {Muzak::Config}.
 ## General behavior
 
 All of muzak's configuration is kept in {Muzak::Config}, which is read
-during load-time (i.e., during `require`) from {Muzak::CONFIG_FILE}, which
-is YAML-formatted.
+during load-time (i.e., during `require`) from {Muzak::Config::CONFIG_FILE},
+which is YAML-formatted.
 
 Muzak loads configuration keys just like commands, translating them from
 `kebab-case` to `snake_case`. For example, take the following configuration:

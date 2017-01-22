@@ -61,6 +61,7 @@ module Muzak
       "music" => File.expand_path("~/music"),
       "player" => "mpv",
       "jukebox-size" => 100,
+      "autoplay" => false,
 
       # client/daemon defaults
       "daemon-port" => 2669,

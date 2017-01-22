@@ -8,11 +8,18 @@ module Muzak
   module Player
     extend Utils
 
-    # An association of shorthand player "names" to Class objects.
-    PLAYER_MAP = {
-      "stub" => Player::StubPlayer,
-      "mpv" => Player::MPV
-    }.freeze
+    # All classes (player implementations) under the {Player} namespace.
+    # @api private
+    PLAYER_CLASSES = constants.map(&Player.method(:const_get)).grep(Class).freeze
+
+    # All human-friendly player names.
+    # @see Player::StubPlayer.player_name
+    # @api private
+    PLAYER_NAMES = PLAYER_CLASSES.map(&:player_name).freeze
+
+    # An association of human-friendly player names to implementation classes.
+    # @api private
+    PLAYER_MAP = PLAYER_NAMES.zip(PLAYER_CLASSES).to_h.freeze
 
     # Returns an instantiated player as specified in `Config.player`.
     # @return [StubPlayer] the player instance

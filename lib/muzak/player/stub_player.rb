@@ -9,6 +9,12 @@ module Muzak
       # @return [Instance] the instance associated with this player
       attr_reader :instance
 
+      # The player's human friendly name.
+      # @return [String] the name
+      def self.player_name
+        name.split("::").last.downcase
+      end
+
       # @return [true] whether or not this type of player is available
       def self.available?
         true

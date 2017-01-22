@@ -6,7 +6,7 @@ module Muzak
     # @note Many playback commands will automatically activate the player.
     def player_activate
       if player.running?
-        warn "player is already running"
+        danger "player is already running"
       else
         player.activate!
       end
@@ -21,7 +21,7 @@ module Muzak
     # @cmdexample `muzak> player-deactivate`
     # @note Deactivating the player (usually) ends playback immediately.
     def player_deactivate
-      warn "player is not running" unless player.running?
+      danger "player is not running" unless player.running?
 
       # do cleanup even if the player isn't running, just in case
       player.deactivate!
@@ -160,7 +160,7 @@ module Muzak
     def now_playing
       if player.playing?
         build_response data: {
-          playing: player.now_playing.full_title
+          playing: player.now_playing&.full_title
         }
       else
         build_response error: "no currently playing song"

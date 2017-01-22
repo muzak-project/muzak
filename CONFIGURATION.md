@@ -111,7 +111,9 @@ Muzak uses this key to point the indexer at the correct directory.
 
 *Default:* `mpv`
 
-`player: <player>` should be set to the short name of the user's music player.
+`player: <player>` should be set to the human-friendly name of the user's music
+player. This human-friendly name is generated from the player's ruby class name
+just like a plugin (e.g., `Muzak::Player::MPV` becomes `mpv`).
 Muzak uses this key to find the correct {Muzak::Player} underclass to
 initialize and control.
 
@@ -143,11 +145,24 @@ It's entirely up to the user's player to obey this value.
 
 *Optional.*
 
+*Default:* `false`
+
+If `autoplay: true` is set in the configuration file, then muzak will begin
+tell the player to begin playing as soon as media is loaded.
+
+### `default_playlist`
+
+*Optional.*
+
 *No default.*
 
-`autoplay: <playlist>` should be set to a playlist that the user wishes to
-automatically start when muzak starts. If not set, no playlist is automatically
-played.
+`default_playlist: <playlist>` should be set to a playlist that the user wishes
+to automatically load when muzak starts. If not set, no playlist is
+automatically loaded.
+
+*Note:* `default_playlist` does not automatically play the specified playlist
+(it only loads it). `autoplay: true` must be set to automatically play the
+default playlist.
 
 ## Daemon/client configuration
 

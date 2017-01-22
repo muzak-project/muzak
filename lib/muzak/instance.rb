@@ -20,7 +20,7 @@ module Muzak
           build_response error: "got #{args.size} args, needed #{meth.arity}"
         end
       else
-        warn "unknown command: '#{cmd}'"
+        danger "unknown command: '#{cmd}'"
         build_response error: "unknown command '#{cmd}'"
       end
     end
@@ -50,7 +50,7 @@ module Muzak
 
       @playlists = Playlist.load_playlists!
 
-      enqueue_playlist Config.autoplay if Config.autoplay
+      enqueue_playlist Config.default_playlist if Config.default_playlist
 
       event :instance_started, self
     end

@@ -8,12 +8,12 @@ module Muzak
   module Player
     # Exposes MPV's IPC to muzak for playback control.
     class MPV < StubPlayer
-      # @return [Boolean] Whether or not MPV is available for execution
+      # @return [Boolean] whether or not MPV is available for execution
       def self.available?
         Utils.which?("mpv")
       end
 
-      # @return [Boolean] Whether or not the current instance is running.
+      # @return [Boolean] whether or not the current instance is running.
       def running?
         !!@mpv&.running?
       end
@@ -179,7 +179,8 @@ module Muzak
       # @return [void]
       # @api private
       def load_song(song, art)
-        cmds = ["loadfile", song.path, "append-play"]
+        append_type = Config.autoplay ? "append-play" : "append"
+        cmds = ["loadfile", song.path, append_type]
         cmds << "external-file=\"#{art}\"" if art
         @mpv.command *cmds
       end

@@ -15,7 +15,7 @@ module Muzak
 
       # @return [Boolean] Whether or not the current instance is running.
       def running?
-        @mpv&.running?
+        !!@mpv&.running?
       end
 
       # Activate mpv by executing it and preparing for event processing.

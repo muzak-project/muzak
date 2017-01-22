@@ -35,6 +35,5 @@ as well as on RubyDoc.
 ### TODO
 
 * GUI "frontend"?
-* isolation of art and music output (`Muzak::ArtProvider`?)
 * current indexing/sorting logic is terrible
-* replace MPV IPC implementation with [ruby-mpv](https://github.com/woodruffw/ruby-mpv)
+* figure out how to do events/album art in VLC

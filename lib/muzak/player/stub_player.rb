@@ -1,6 +1,8 @@
 module Muzak
   module Player
     # A no-op player that all players inherit from.
+    # @abstract Subclass and implement all public methods to implement
+    #  a player.
     class StubPlayer
       include Utils
 

@@ -1,6 +1,8 @@
 module Muzak
   module Plugin
     # A no-op plugin that all real plugins inherit from.
+    # @abstract Subclass and define any of {Config::PLUGIN_EVENTS}
+    #  as methods to implement plugins.
     class StubPlugin
       include Utils
 

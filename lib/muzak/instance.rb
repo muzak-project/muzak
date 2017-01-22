@@ -7,6 +7,7 @@ module Muzak
     # Sends a command to the instance.
     # @param cmd [String] the name of the command
     # @param args [Array<String>] the command's arguments
+    # @return [Hash] the command's response hash
     # @example
     #   instance.command "enqueue-playlist", "favorites"
     #   instance.command "pause"
@@ -36,7 +37,7 @@ module Muzak
     # @return [Hash{String => Playlist}] the instance's playlists
     attr_reader :playlists
 
-    def initialize(opts = {})
+    def initialize
       verbose "muzak is starting..."
 
       error! "#{Config.music} doesn't exist" unless File.exist?(Config.music)
@@ -57,6 +58,7 @@ module Muzak
     # Dispatch an event to all plugins.
     # @param type [Symbol] the type of event to dispatch
     # @param args [Array] the event's arguments
+    # @return [void]
     # @note {Config::PLUGIN_EVENTS} contains all valid events.
     def event(type, *args)
       return unless Config::PLUGIN_EVENTS.include?(type)

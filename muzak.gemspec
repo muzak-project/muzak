@@ -14,5 +14,5 @@ Gem::Specification.new do |s|
   s.license = "MIT"
   s.add_runtime_dependency "taglib-ruby", "~> 0.7"
   s.add_runtime_dependency "mpv", "~> 1.1", ">= 1.1.0"
-  s.add_runtime_dependency "vlc-client", "~> 0.0.6"
+  s.add_runtime_dependency "vlc-client", "~> 0.0.7"
 end

@@ -4,18 +4,6 @@ module Muzak
   module Player
     # Exposes a VLC process to muzak for playback control.
     class VLC < StubPlayer
-      # The expression used to extract the filename out of {#status}
-      # @api private
-      INPUT_REGEX = /\( new input: file:\/\/(.*) \)/.freeze
-
-      # The expression used to extract the volume out of {#status}
-      # @api private
-      VOLUME_REGEX = /\( audio volume: (\d+) \)/.freeze
-
-      # The expression used to extract the playing status out of {#status}
-      # @api private
-      PLAYING_REGEX = /\( state (.*) \)/.freeze
-
       # @return [Boolean] whether or not VLC is available
       def self.available?
         Utils.which?("vlc") && Utils.which?("cvlc")
@@ -146,8 +134,7 @@ module Muzak
       # Get VLC's currently loaded song.
       # @return [Song, nil] the currently loaded song
       def now_playing
-        filename = INPUT_REGEX.match(status.first)[1]
-        Song.new(filename)
+        Song.new(@vlc.status[:file])
       end
 
       # Load a song into VLC.
@@ -157,16 +144,6 @@ module Muzak
       def load_song(song)
         @vlc.add_to_playlist song.path
         @vlc.play if Config.autoplay
-      end
-
-      # Get VLC's status.
-      # @return [Array<String>] the loaded file, volume, and playing statuses
-      # @api private
-      # @note The strings returned by this method can be handled via
-      #  {INPUT_REGEX}, {VOLUME_REGEX}, and {PLAYING_REGEX}.
-      def status
-        @vlc.connection.write "status"
-        3.times.collect { @vlc.connection.read }
       end
     end
   end

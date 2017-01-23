@@ -56,6 +56,8 @@ module Muzak
 
       # @return [Boolean] whether or not VLC is currently playing.
       def playing?
+        return false unless running?
+
         @vlc.playing?
       end
 
@@ -134,6 +136,8 @@ module Muzak
       # Get VLC's currently loaded song.
       # @return [Song, nil] the currently loaded song
       def now_playing
+        return unless playing?
+
         Song.new(@vlc.status[:file])
       end
 

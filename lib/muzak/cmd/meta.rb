@@ -39,6 +39,7 @@ module Muzak
       verbose "muzak is quitting..."
       player.deactivate!
 
+      event :instance_quitting
       build_response data: "quitting"
     end
   end

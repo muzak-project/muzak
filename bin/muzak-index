@@ -2,7 +2,7 @@
 
 require "muzak"
 
-VERSION = 1
+VERSION = 2
 
 OPTS = {
   deep: !!(ARGV.delete("--deep") || ARGV.delete("-d")),
@@ -13,7 +13,7 @@ OPTS = {
 
 def help
   puts <<~EOS
-    Usage: #{$PROGRAM_NAME} [options] <tree> [index]
+    Usage: #{$PROGRAM_NAME} [options] [tree] [index]
 
     Options:
       --deep, -d      Build a "deep" index (contains metadata)

@@ -10,7 +10,7 @@ module Muzak
     class MPV < StubPlayer
       # @return [Boolean] whether or not MPV is available for execution
       def self.available?
-        Utils.which?("mpv")
+        ::MPV::Server.available?
       end
 
       # @return [Boolean] whether or not the current instance is running.
@@ -40,6 +40,11 @@ module Muzak
         ]
 
         mpv_args << "--geometry=#{Config.art_geometry}" if Config.art_geometry
+
+        # this is an experimental flag, but it could improve
+        # muzak's load times substantially when used with a network
+        # mounted music library
+        mpv_args << "--prefetch-playlist" if ::MPV::Server.has_flag?("--prefetch-playlist")
 
         @mpv = ::MPV::Session.new(user_args: mpv_args)
         @mpv.callbacks << ::MPV::Callback.new(self, :dispatch_event!)

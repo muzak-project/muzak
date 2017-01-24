@@ -93,12 +93,6 @@ module Muzak
       false
     end
 
-    # Synchronizes the in-memory configuration with {CONFIG_FILE}.
-    # @return [void]
-    def self.sync!
-      File.open(CONFIG_FILE, "w") { |io| io.write @config.to_yaml }
-    end
-
     # @return [Boolean] whether or not the given plugin is configured
     # @note the truth-value of this method is used to determine which
     #   plugins should be loaded.
@@ -115,7 +109,7 @@ module Muzak
         FileUtils.mkdir_p d
       end
 
-      sync!
+      File.open(CONFIG_FILE, "w") { |io| io.write DEFAULT_CONFIG.to_yaml }
     end
 
     @config = DEFAULT_CONFIG.merge(user_config)
@@ -127,7 +121,7 @@ module Muzak
 
       define_singleton_method "#{resolve_command(key)}=" do |value|
         @config[key] = value
-        sync!
+        File.open(CONFIG_FILE, "w") { |io| io.write @config.to_yaml }
       end
     end
   end

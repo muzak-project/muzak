@@ -50,7 +50,7 @@ version if OPTS[:version]
 tree = ARGV.shift || Muzak::Config.music
 bail "missing or invalid tree: <tree>" unless tree && File.exist?(tree)
 
-index_file = ARGV.shift || Muzak::INDEX_FILE
+index_file = ARGV.shift || Muzak::Config::INDEX_FILE
 
 index_hash = {
   "tree" => tree,

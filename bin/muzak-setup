@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+require "tty-prompt"
+require "muzak"
+
+VERSION = 1
+
+prompt = TTY::Prompt.new
+
+puts <<~EOS
+  Welcome to muzak's interactive setup.
+  This script is useful primarily for first-time users.
+  This WILL rewrite your configuration, so be careful about using it.
+EOS
+
+exit unless prompt.yes?("Continue?")
+
+Muzak::Config.music = prompt.ask("Where is your music?",
+                                 default: Muzak::Config.music)
+
+Muzak::Config.player = prompt.select("Select your player:",
+                                     Muzak::Player::PLAYER_NAMES)
+
+puts <<~EOS
+  Congratulations! You should be (nearly) ready to use muzak.
+  The only thing remaining is to run the indexer:
+    muzak-index [--deep]
+  See the muzak-index's --help flag for more information on options.
+  Once the indexer finishes, just start the daemon:
+    muzakd
+  Once running, you'll be able to muzak through muzak-cmd and muzak-dmenu!
+EOS

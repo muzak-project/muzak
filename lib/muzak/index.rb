@@ -23,6 +23,15 @@ module Muzak
       debug "loading index from '#{Config::INDEX_FILE}'..."
 
       @hash = Marshal.load(File.read file)
+
+      # create some frequently accessed collections
+      @all_albums = @hash["artists"].map { |_, a| a["albums"] }.flatten
+
+      if deep?
+        @all_deep_songs = @all_albums.map { |aa| aa.map { |_, a| a["deep-songs"] } }.flatten
+      else
+        @all_songs = @all_albums.map { |aa| aa.map { |_, a| a["songs"] } }.flatten
+      end
     end
 
     # @return [Boolean] whether or not the current index is deep
@@ -61,6 +70,17 @@ module Muzak
       end
     end
 
+    # @return [Array<Song>] a list of all Song objects in the index
+    # @note This method **requires** a deep index.
+    def songs
+      unless deep?
+        danger "tried to call a deep-index-only method with a shallow index"
+        return []
+      end
+
+      @all_deep_songs
+    end
+
     # @return [Array<String>] a list of all albums in the index
     # @note albums with the same name will appear, but can't be disambiguated
     #   from here
@@ -90,13 +110,9 @@ module Muzak
     # @param count [Integer] the number of random songs to return
     # @return [Array<Song>] an array of randomly chosen songs
     def jukebox(count = 50)
-      @all_albums ||= @hash["artists"].map { |_, a| a["albums"] }.flatten
-
       if deep?
-        @all_deep_songs ||= @all_albums.map { |aa| aa.map { |_, a| a["deep-songs"] } }.flatten
         @all_deep_songs.sample(count)
       else
-        @all_songs ||= @all_albums.map { |aa| aa.map { |_, a| a["songs"] } }.flatten
         @all_songs.sample(count).map { |s| Song.new(s) }
       end
     end

@@ -65,7 +65,11 @@ module Muzak
 
       plugins.each do |plugin|
         Thread.new do
-          plugin.send(type, *args)
+          begin
+            plugin.send(type, *args)
+          rescue => e
+            error "something went wrong in #{plugin.class.plugin_name}: #{e}"
+          end
         end
       end
     end

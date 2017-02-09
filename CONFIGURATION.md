@@ -120,6 +120,17 @@ initialize and control.
 The short names of supported players can be found in
 {Muzak::Player::PLAYER_MAP}.
 
+### `mpv-no-art`
+
+*Optional.*
+
+*Default:* `false`
+
+If `mpv-no-art: true` is set in the configuration file *and* `player: mpv` is
+set, then `mpv` will be instructed to disable all video output entirely.
+This option is primarily useful in conjunction with plugins that provide
+album art display, or for making Muzak entirely non-graphical.
+
 ### `jukebox-size`
 
 *Mandatory.*
@@ -139,7 +150,7 @@ by default with the `jukebox` size.
 album art, in "WxH" format. If not set, album art will be displayed at
 any size the player pleases.
 
-It's entirely up to the user's player to obey this value.
+It's entirely up to the user's player and/or plugins to obey this value.
 
 ### `autoplay`
 

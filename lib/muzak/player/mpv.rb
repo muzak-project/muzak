@@ -25,11 +25,7 @@ module Muzak
 
         debug "activating #{self.class}"
 
-        mpv_args = [
-          # if i get around to separating album art from playback,
-          # these two flags disable mpv's video output entirely
-          # "--no-force-window",
-          # "--no-video",
+        args = [
           # there's also this, which (might) also work
           # "--audio-display=no",
           "--no-osc",
@@ -39,14 +35,16 @@ module Muzak
           "--load-scripts=no", # autoload and other scripts with clobber our mpv management
         ]
 
-        mpv_args << "--geometry=#{Config.art_geometry}" if Config.art_geometry
+        args.concat ["--no-force-window", "--no-video"] if Config.mpv_no_art
+
+        args << "--geometry=#{Config.art_geometry}" if Config.art_geometry
 
         # this is an experimental flag, but it could improve
         # muzak's load times substantially when used with a network
         # mounted music library
-        mpv_args << "--prefetch-playlist" if ::MPV::Server.has_flag?("--prefetch-playlist")
+        args << "--prefetch-playlist" if ::MPV::Server.has_flag?("--prefetch-playlist")
 
-        @mpv = ::MPV::Session.new(user_args: mpv_args)
+        @mpv = ::MPV::Session.new(user_args: args)
         @mpv.callbacks << ::MPV::Callback.new(self, :dispatch_event!)
 
         instance.event :player_activated

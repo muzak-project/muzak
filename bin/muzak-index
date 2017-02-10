@@ -22,8 +22,8 @@ def help
       --version, -v   Print version information
 
     Arguments:
-      [tree]          The filesystem tree to index (default: ~/music)
-      [index]         The saved index (default: ~/.config/muzak/index.dat)
+      [tree]          The filesystem tree to index (default: #{Muzak::Config.music})
+      [index]         The saved index (default: #{Muzak::Config::INDEX_FILE})
   EOS
 
   exit

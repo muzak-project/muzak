@@ -206,3 +206,14 @@ listen on.
 `dmenu-exec: <command args...>` can be used to alter `muzak-dmenu`'s
 invocation of `dmenu`. It can also be used to substitute a dmenu-compatible
 prompt like `rofi -dmenu`.
+
+### `dmenu-lines-exec`
+
+*Optional.*
+
+*No default.*
+
+`dmenu-lines-exec: <command args>` can be used to alter `muzak-dmenu`'s
+invocation of `dmenu` when showing selections on multiple lines (e.g.,
+when offering albums after `enqueue-album` has been selected). It can be
+used to substitute a dmenu-compatible prompt like `rofi -dmenu`.

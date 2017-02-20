@@ -2,29 +2,62 @@
 
 require "muzak"
 require "socket"
+require "json"
+require "open3"
+
+DMENU_EXEC = Muzak::Config.dmenu_exec || "dmenu"
+DMENU_LINES_EXEC = Muzak::Config.dmenu_lines_exec || "dmenu -l 10"
 
 def fatal(msg)
   STDERR.puts "Fatal: #{msg}"
   exit 1
 end
 
-def dmenu(options)
-	dmenu = Muzak::Config.dmenu_exec || "dmenu"
+def dmenu(options, lines: false)
+  dmenu_cmd = lines ? DMENU_LINES_EXEC : DMENU_EXEC
 	opts = options.join("\n")
-	`printf "#{opts}" | #{dmenu}`
+  Open3.popen2(dmenu_cmd) do |stdin, stdout|
+    stdin.puts opts
+    stdin.close
+    stdout.gets
+  end
 end
 
-begin
-  server_host = Muzak::Config.daemon_host
-  server_port = Muzak::Config.daemon_port
-  sock = TCPSocket.new server_host, server_port
-rescue
-  fatal "Is muzakd running?"
+def muzak_cmd(command)
+  begin
+    server_host = Muzak::Config.daemon_host
+    server_port = Muzak::Config.daemon_port
+    sock = TCPSocket.new server_host, server_port
+  rescue
+    fatal "Is muzakd running?"
+  end
+
+  sock.puts command unless command.empty?
+  response = sock.gets
+  sock.close
+
+  JSON.parse(response)
 end
 
 command = dmenu Muzak::Cmd.commands
 
-sock.puts command unless command.empty?
-puts sock.gets
+exit if command.nil? || command.empty?
 
-sock.close
+arguments = case command.chomp
+            when "enqueue-artist"
+              artists = muzak_cmd("list-artists")["response"]["data"]["artists"]
+              dmenu(artists, lines: true)
+            when "enqueue-album"
+              albums = muzak_cmd("list-albums")["response"]["data"]["albums"]
+              dmenu(albums, lines: true)
+            when "enqueue-playlist"
+              playlists = muzak_cmd("list-playlists")["response"]["data"]["playlists"]
+              dmenu(playlists, lines: true)
+            end
+
+command = "#{command.chomp} #{arguments}" if arguments
+
+puts command
+
+muzak_cmd command
+

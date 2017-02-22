@@ -26,7 +26,10 @@ module Muzak
     # Instantiates all configured plugins and returns them.
     # @return [Array<StubPlugin>] the instantiated plugins
     def self.load_plugins!
-      pks = PLUGIN_CLASSES.select { |pk| Config.plugin? pk.plugin_name }
+      pks = PLUGIN_CLASSES.select do |pk|
+        Config.plugin?(pk.plugin_name) && pk.available?
+      end
+
       pks.map { |pk| pk.new }
     end
   end

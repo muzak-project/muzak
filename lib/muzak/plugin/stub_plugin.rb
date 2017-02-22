@@ -12,6 +12,11 @@ module Muzak
         name.split("::").last.downcase
       end
 
+      # @return [true] whether or not this plugin is available
+      def self.available?
+        true
+      end
+
       def initialize
         debug "loading #{self.class}"
       end

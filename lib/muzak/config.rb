@@ -94,7 +94,7 @@ module Muzak
     end
 
     # @return [Boolean] whether or not the given plugin is configured
-    # @note the truth-value of this method is used to determine which
+    # @note the truth-value of this method is used in part to determine which
     #   plugins should be loaded.
     def self.plugin?(pname)
       respond_to? "plugin_#{pname}"

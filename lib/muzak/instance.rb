@@ -64,12 +64,10 @@ module Muzak
       return unless Config::PLUGIN_EVENTS.include?(type)
 
       plugins.each do |plugin|
-        Thread.new do
-          begin
-            plugin.send(type, *args)
-          rescue => e
-            error "something went wrong in #{plugin.class.plugin_name}: #{e}"
-          end
+        begin
+          Thread.new { plugin.send(type, *args) }
+        rescue => e
+          error "something went wrong in #{plugin.class.plugin_name}: #{e}"
         end
       end
     end

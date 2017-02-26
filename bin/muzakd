@@ -7,7 +7,6 @@ require "json"
 require "thread"
 
 Process.daemon unless Muzak::Config.debug || Muzak::Config.verbose
-Thread.abort_on_exception = Muzak::Config.debug
 
 muzak = Muzak::Instance.new
 

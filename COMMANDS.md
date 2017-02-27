@@ -938,6 +938,39 @@ $ muzak-cmd quit
 }
 ```
 
+## `reload-index`
+
+Reloads muzak's in-memory index.
+
+**Note:** This does *not* rebuild the index file - `muzak-index` is provided
+as a command line utility for that.
+
+### Syntax
+
+`reload-index`
+
+### Example
+
+```bash
+$ muzak-cmd reload-index
+```
+
+### Example Response
+
+```json
+{
+   "response" : {
+      "error" : null,
+      "data" : {
+         "artist_count" : 262,
+         "album_count" : 1161,
+         "deep" : true
+      },
+      "method" : "reload_index"
+   }
+}
+```
+
 ## `shuffle-queue`
 
 Shuffles the player's playback queue.

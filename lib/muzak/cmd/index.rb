@@ -1,5 +1,19 @@
 module Muzak
   module Cmd
+    # Reload the active index from the index file.
+    # @note This does *not* rebuild the index.
+    # @command `reload-index`
+    # @cmdexample `muzak> reload-index`
+    def reload_index
+      index.reload!
+
+      build_response data: {
+        artist_count: index.artists.size,
+        album_count: index.albums.size,
+        deep: index.deep?,
+      }
+    end
+
     # List all artists in the index.
     # @command `list-artists`
     # @cmdexample `muzak> list-artists`

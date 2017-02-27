@@ -12,6 +12,9 @@ module Muzak
       end
     end
 
+    # @return [String] the path of the index data file
+    attr_accessor :file
+
     # @return [String] the path of the root of the music tree
     attr_accessor :tree
 
@@ -22,16 +25,20 @@ module Muzak
     def initialize(file: Config::INDEX_FILE)
       debug "loading index from '#{file}'..."
 
+      @file = file
+
       @hash = Marshal.load(File.read file)
 
-      # create some frequently accessed collections
-      @all_albums = @hash["artists"].map { |_, a| a["albums"] }.flatten
+      memoize_collections!
+    end
 
-      if deep?
-        @all_deep_songs = @all_albums.map { |aa| aa.map { |_, a| a["deep-songs"] } }.flatten
-      else
-        @all_songs = @all_albums.map { |aa| aa.map { |_, a| a["songs"] } }.flatten
-      end
+    # Refresh the {Index} instance's state from the index data file.
+    # @note This method does *not* rebuild the index data file.
+    # @return [void]
+    def reload!
+      debug "reloading index from '#{file}'..."
+      @hash = Marshal.load(File.read file)
+      memoize_collections!
     end
 
     # @return [Boolean] whether or not the current index is deep
@@ -130,6 +137,19 @@ module Muzak
         end.flatten
       rescue Exception => e
         []
+      end
+    end
+
+    # Create some frequently accessed collections to speed things up a bit.
+    # @return [void]
+    # @api private
+    def memoize_collections!
+      @all_albums = @hash["artists"].map { |_, a| a["albums"] }.flatten
+
+      if deep?
+        @all_deep_songs = @all_albums.map { |aa| aa.map { |_, a| a["deep-songs"] } }.flatten
+      else
+        @all_songs = @all_albums.map { |aa| aa.map { |_, a| a["songs"] } }.flatten
       end
     end
   end

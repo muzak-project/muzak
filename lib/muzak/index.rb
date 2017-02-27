@@ -20,7 +20,7 @@ module Muzak
 
     # @param file [String] the path of the index data file
     def initialize(file: Config::INDEX_FILE)
-      debug "loading index from '#{Config::INDEX_FILE}'..."
+      debug "loading index from '#{file}'..."
 
       @hash = Marshal.load(File.read file)
 

@@ -1,4 +1,5 @@
 require "taglib"
+require "json"
 
 module Muzak
   # Represents a single song for muzak.
@@ -80,6 +81,28 @@ module Muzak
     # @note compares song paths, not metadata
     def ==(other)
       other.is_a?(Song) && path == other.path
+    end
+
+    # @return [Hash] a hash representation of the song, including pathname
+    def to_h
+      {
+        path: path,
+        title: title,
+        artist: artist,
+        album: album,
+        year: year,
+        track: track,
+        genre: genre,
+        comment: comment,
+        length: length,
+      }
+    end
+
+    # @param options [Array] options passed to the internal `to_json` call
+    # @return [String] a JSON-serialized representation of the song
+    # @note uses {to_h} to build the representation
+    def to_json(*options)
+      to_h.to_json(*options)
     end
   end
 end

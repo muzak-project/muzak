@@ -179,6 +179,34 @@ $ muzak-cmd config-get jukebox-size
 }
 ```
 
+## `dump-index`
+
+Dumps the current state of muzak's index into a response.
+
+### Syntax
+
+`dump-index`
+
+### Example
+
+```bash
+$ muzak-cmd dump-index
+```
+
+### Example Response
+
+```json
+{
+   "response" : {
+      "error" : null,
+      "method" : "dump_index",
+      "data" : {
+         "index": { /* ... */ }
+      }
+   }
+}
+```
+
 ## `enqueue-album`
 
 Adds the given album to the player's queue.

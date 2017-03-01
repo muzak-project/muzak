@@ -14,6 +14,15 @@ module Muzak
       }
     end
 
+    # Dump a hash representation of the index.
+    # @command `dump-index`
+    # @cmdexample `muzak> dump-index`
+    def dump_index
+      build_response data: {
+        index: index.hash
+      }
+    end
+
     # List all artists in the index.
     # @command `list-artists`
     # @cmdexample `muzak> list-artists`

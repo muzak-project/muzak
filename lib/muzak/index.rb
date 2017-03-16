@@ -38,6 +38,7 @@ module Muzak
     def reload!
       debug "reloading index from '#{file}'..."
       @hash = Marshal.load(File.read file)
+      @albums_hash = nil
       memoize_collections!
     end
 
@@ -53,7 +54,7 @@ module Muzak
 
     # @return [Array<String>] a list of all artists in the index
     def artists
-      @artists ||= @hash["artists"].keys
+      @hash["artists"].keys
     end
 
     # @return [Hash{String => Album}] a hash of all album names with their

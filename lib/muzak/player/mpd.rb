@@ -48,7 +48,7 @@ module Muzak
       # @return [void]
       # @note Does nothing is playback is already paused.
       def pause
-        @mpd.pause
+        @mpd.pause = true
       end
 
       # @return [Boolean] whether or not MPD is currently playing.

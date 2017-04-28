@@ -166,8 +166,7 @@ module Muzak
       # @return [void]
       def clear_queue
         return unless running?
-
-        @mpv.command "playlist-clear"
+        @mpv.command "stop"
       end
 
       # Get mpv's currently loaded song.

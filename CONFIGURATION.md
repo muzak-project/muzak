@@ -151,6 +151,24 @@ If the `player` key is set to `multiplayer`, then this should be set to the
 array of players to use together. For example,
 `multiplayer-players: [mpv, mpd]`.
 
+### `mpd-host`
+
+*Optional.*
+
+*Default:* `localhost`
+
+If `mpd-host` is set *and* the `mpd` player is used, then `mpd` will use this
+value as the MPD host to connect to.
+
+### `mpd-port`
+
+*Optional.*
+
+*Default:* `6600`
+
+If `mpd-port` is set *and* the `mpd` player is used, then `mpd` will use this
+value as the MPD port to connect to.
+
 ### `jukebox-size`
 
 *Mandatory.*

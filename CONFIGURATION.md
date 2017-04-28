@@ -76,6 +76,16 @@ These are the configuration keys observed by muzak's "core," particularly
 
 In no particular order:
 
+### `event`
+
+*Optional.*
+
+*Default:* `true`
+
+If `event: false` is set in the configuration file, then muzak will not
+attempt to propagate events to plugins. This might be useful for debugging
+or when using multiple players at once via {Muzak::Player::MultiPlayer}.
+
 ### `debug`
 
 *Optional.*

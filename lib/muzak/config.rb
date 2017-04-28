@@ -57,6 +57,7 @@ module Muzak
     # The default configuration keys and values.
     DEFAULT_CONFIG = {
       # core defaults
+      "events" => true,
       "debug" => false,
       "verbose" => true,
       "music" => File.expand_path("~/music"),

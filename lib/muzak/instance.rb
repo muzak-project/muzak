@@ -61,6 +61,8 @@ module Muzak
     # @return [void]
     # @note {Config::PLUGIN_EVENTS} contains all valid events.
     def event(type, *args)
+      # don't propagate events if disabled by the user
+      return unless Config.events
       return unless Config::PLUGIN_EVENTS.include?(type)
 
       plugins.each do |plugin|

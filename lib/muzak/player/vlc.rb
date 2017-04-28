@@ -43,6 +43,8 @@ module Muzak
       # @return [void]
       # @note Does nothing is playback is already in progress.
       def play
+        return unless running?
+
         @vlc.play
       end
 
@@ -50,6 +52,8 @@ module Muzak
       # @return [void]
       # @note Does nothing is playback is already paused.
       def pause
+        return unless running?
+
         @vlc.pause
       end
 

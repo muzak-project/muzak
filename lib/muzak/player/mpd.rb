@@ -41,6 +41,8 @@ module Muzak
       # @return [void]
       # @note Does nothing is playback is already in progress.
       def play
+        return unless running?
+
         @mpd.play
       end
 
@@ -48,7 +50,9 @@ module Muzak
       # @return [void]
       # @note Does nothing is playback is already paused.
       def pause
-        @mpd.pause = true
+        return unless running?
+
+        @mpd.pause = 1
       end
 
       # @return [Boolean] whether or not MPD is currently playing.
@@ -146,7 +150,7 @@ module Muzak
       def load_song(song)
         path = song.path.sub("#{Config.music}/", "")
         @mpd.add(path)
-        @mpd.play if Config.autoplay
+        @mpd.play if Config.autoplay && !playing?
       end
     end
   end

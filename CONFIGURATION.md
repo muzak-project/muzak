@@ -141,6 +141,16 @@ set, then `mpv` will be instructed to disable all video output entirely.
 This option is primarily useful in conjunction with plugins that provide
 album art display, or for making Muzak entirely non-graphical.
 
+### `multiplayer-players`
+
+*Mandatory if using `multiplayer`.*
+
+*No default.*
+
+If the `player` key is set to `multiplayer`, then this should be set to the
+array of players to use together. For example,
+`multiplayer-players: [mpv, mpd]`.
+
 ### `jukebox-size`
 
 *Mandatory.*

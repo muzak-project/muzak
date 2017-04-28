@@ -46,7 +46,6 @@ module Muzak
         @vlc.play
       end
 
-
       # Tell VLC to pause playback.
       # @return [void]
       # @note Does nothing is playback is already paused.
@@ -130,6 +129,7 @@ module Muzak
       # Clear VLC's internal queue.
       # @return [void]
       def clear_queue
+        return unless running?
         @vlc.clear
       end
 

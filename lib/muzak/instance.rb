@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Muzak
   # Encapsulates the entirety of muzak's running state.
   class Instance
@@ -15,7 +17,7 @@ module Muzak
       if Cmd.commands.include?(cmd)
         meth = method(Config.resolve_command(cmd))
         if meth.arity == args.size || meth.arity <= -1
-          meth.call *args
+          meth.call(*args)
         else
           build_response error: "got #{args.size} args, needed #{meth.arity}"
         end
@@ -42,12 +44,9 @@ module Muzak
 
       error! "#{Config.music} doesn't exist" unless File.exist?(Config.music)
 
-      @index = Index.load_index!
-
-      @player = Player.load_player!(self)
-
-      @plugins = Plugin.load_plugins!
-
+      @index     = Index.load_index!
+      @player    = Player.load_player!(self)
+      @plugins   = Plugin.load_plugins!
       @playlists = Playlist.load_playlists!
 
       enqueue_playlist Config.default_playlist if Config.default_playlist

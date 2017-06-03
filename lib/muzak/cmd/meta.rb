@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Muzak
   module Cmd
     # Return a simple heartbeat message.
@@ -8,16 +10,16 @@ module Muzak
       debug "pong: #{timestamp}"
 
       build_response data: {
-        pong: timestamp
+        pong: timestamp,
       }
     end
 
     # Return a "helpful" listing of commands.
     # @command `help`
     # @cmdexample `muzak> help`
-    def help(*args)
+    def help(*_args)
       build_response data: {
-        commands: Muzak::Cmd.commands
+        commands: Muzak::Cmd.commands,
       }
     end
 
@@ -28,7 +30,7 @@ module Muzak
     #   plugins are configured.
     def list_plugins
       build_response data: {
-        plugins: Plugin.plugin_names
+        plugins: Plugin.plugin_names,
       }
     end
 

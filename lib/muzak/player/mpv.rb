@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "tempfile"
 require "socket"
 require "json"
@@ -8,6 +10,14 @@ module Muzak
   module Player
     # Exposes MPV's IPC to muzak for playback control.
     class MPV < StubPlayer
+      DEFAULT_MPV_ARGS = [
+        "--no-osc",
+        "--no-osd-bar",
+        "--no-input-default-bindings",
+        "--no-input-cursor",
+        "--load-scripts=no", # autoload and other scripts clobber our mpv management
+      ].freeze
+
       # @return [Boolean] whether or not MPV is available for execution
       def self.available?
         ::MPV::Server.available?
@@ -25,24 +35,7 @@ module Muzak
 
         debug "activating #{self.class}"
 
-        args = [
-          # there's also this, which (might) also work
-          # "--audio-display=no",
-          "--no-osc",
-          "--no-osd-bar",
-          "--no-input-default-bindings",
-          "--no-input-cursor",
-          "--load-scripts=no", # autoload and other scripts with clobber our mpv management
-        ]
-
-        args.concat ["--no-force-window", "--no-video"] if Config.mpv_no_art
-
-        args << "--geometry=#{Config.art_geometry}" if Config.art_geometry
-
-        # this is an experimental flag, but it could improve
-        # muzak's load times substantially when used with a network
-        # mounted music library
-        args << "--prefetch-playlist" if ::MPV::Server.has_flag?("--prefetch-playlist")
+        args = DEFAULT_MPV_ARGS + configured_mpv_args
 
         @mpv = ::MPV::Session.new(user_args: args)
         @mpv.callbacks << ::MPV::Callback.new(self, :dispatch_event!)
@@ -172,7 +165,22 @@ module Muzak
       # Get mpv's currently loaded song.
       # @return [Song, nil] the currently loaded song
       def now_playing
-        @_now_playing ||= Song.new(@mpv.get_property "path")
+        @_now_playing ||= Song.new @mpv.get_property("path")
+      end
+
+      def configured_mpv_args
+        args = []
+
+        args.concat ["--no-force-window", "--no-video"] if Config.mpv_no_art
+
+        args << "--geometry=#{Config.art_geometry}" if Config.art_geometry
+
+        # this is an experimental flag, but it could improve
+        # muzak's load times substantially when used with a network
+        # mounted music library
+        args << "--prefetch-playlist" if ::MPV::Server.has_flag?("--prefetch-playlist")
+
+        args
       end
 
       # Load a song and optional album art into mpv.
@@ -184,7 +192,7 @@ module Muzak
         append_type = Config.autoplay ? "append-play" : "append"
         cmds = ["loadfile", song.path, append_type]
         cmds << "external-file=\"#{art}\"" if art
-        @mpv.command *cmds
+        @mpv.command(*cmds)
       end
 
       # Dispatch the given event to the active {Muzak::Instance}.

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "yaml"
 require "fileutils"
 
@@ -23,6 +25,9 @@ module Muzak
     # The directory for all user playlists
     PLAYLIST_DIR = File.join(CONFIG_DIR, "playlists").freeze
 
+    # The glob pattern for all user playlists
+    PLAYLIST_GLOB = File.join(PLAYLIST_DIR, "*.yml").freeze
+
     # The directory for all user plugins
     USER_PLUGIN_DIR = File.join(CONFIG_DIR, "plugins").freeze
 
@@ -41,17 +46,17 @@ module Muzak
     ].freeze
 
     # The regular expression that muzak uses to find album art.
-    ALBUM_ART_REGEX = /(cover)|(folder).(jpg)|(png)/i.freeze
+    ALBUM_ART_REGEX = /(cover)|(folder).(jpg)|(png)/i
 
     # All events currently propagated by {Muzak::Instance#event}
-    PLUGIN_EVENTS = [
-      :instance_started,
-      :instance_quitting,
-      :player_activated,
-      :player_deactivated,
-      :song_loaded,
-      :song_unloaded,
-      :playlist_enqueued,
+    PLUGIN_EVENTS = %i[
+      instance_started
+      instance_quitting
+      player_activated
+      player_deactivated
+      song_loaded
+      song_unloaded
+      playlist_enqueued
     ].freeze
 
     # The default configuration keys and values.
@@ -91,7 +96,19 @@ module Muzak
     # Catches all undefined configuration keys and defaults them to false.
     # @return [false]
     def self.method_missing(method, *args)
-      false
+      # this is basically useless, since respond_to_missing? will always be true,
+      # but it gets RuboCop to shut up.
+      if respond_to_missing? method, *args
+        false
+      else
+        super
+      end
+    end
+
+    # We "respond" to all methods with a default of false, so this is always true.
+    # @return [true]
+    def self.respond_to_missing?(*_args)
+      true
     end
 
     # @return [Boolean] whether or not the given plugin is configured
@@ -102,7 +119,7 @@ module Muzak
     end
 
     if File.exist?(CONFIG_FILE)
-      user_config = YAML::load_file(CONFIG_FILE)
+      user_config = YAML.load_file(CONFIG_FILE)
     else
       user_config = DEFAULT_CONFIG
 

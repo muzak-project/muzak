@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Dir.glob(File.join(__dir__, "cmd/*")) { |f| require_relative f }
 
 module Muzak

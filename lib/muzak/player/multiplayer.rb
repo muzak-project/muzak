@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Muzak
   module Player
     # Wraps multiple players into a single class.

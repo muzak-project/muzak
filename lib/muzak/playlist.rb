@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Muzak
   # Represents a sequential list of songs for muzak.
   class Playlist
@@ -30,11 +32,7 @@ module Muzak
 
     # @return [Array<String>] the names of all currently available playlists
     def self.playlist_names
-      Dir.entries(Config::PLAYLIST_DIR).reject do |ent|
-        ent.start_with?(".")
-      end.map do |ent|
-        File.basename(ent, File.extname(ent))
-      end
+      Dir[Config::PLAYLIST_GLOB].map { |p| File.basename(p, File.extname(p)) }
     end
 
     # Instantiates all playlists by loading them from disk.

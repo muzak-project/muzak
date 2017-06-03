@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "muzak/config"
 require_relative "muzak/utils"
 require_relative "muzak/plugin"
@@ -12,5 +14,5 @@ require_relative "muzak/instance"
 # The primary namespace for muzak.
 module Muzak
   # Muzak's current version
-  VERSION = "0.4.2".freeze
+  VERSION = "0.4.2"
 end

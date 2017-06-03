@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Muzak
   # Represents muzak's music index.
   class Index
@@ -26,8 +28,7 @@ module Muzak
       debug "loading index from '#{file}'..."
 
       @file = file
-
-      @hash = Marshal.load(File.read file)
+      @hash = Marshal.load File.read(file) # rubocop:disable Security/MarshalLoad
 
       memoize_collections!
     end
@@ -37,7 +38,7 @@ module Muzak
     # @return [void]
     def reload!
       debug "reloading index from '#{file}'..."
-      @hash = Marshal.load(File.read file)
+      @hash = Marshal.load File.read(file) # rubocop:disable Security/MarshalLoad
       @albums_hash = nil
       memoize_collections!
     end
@@ -65,11 +66,7 @@ module Muzak
 
         artists.each do |a|
           @hash["artists"][a]["albums"].each do |title, album_hash|
-            if deep?
-              songs = album_hash["deep-songs"]
-            else
-              songs = album_hash["songs"].map { |s| Song.new(s) }
-            end
+            songs = load_songs album_hash
             albums_hash[title] = Album.new(title, songs, album_hash["cover"])
           end
         end
@@ -101,11 +98,7 @@ module Muzak
     def albums_by(artist)
       if artists.include?(artist)
         @hash["artists"][artist]["albums"].map do |title, album_hash|
-          if deep?
-            songs = album_hash["deep-songs"]
-          else
-            songs = album_hash["songs"].map { |s| Song.new(s) }
-          end
+          songs = load_songs album_hash
           Album.new(title, songs, album_hash["cover"])
         end
       else
@@ -133,10 +126,8 @@ module Muzak
       error "no such artist: '#{artist}'" unless @hash["artists"].key?(artist)
 
       begin
-        albums_by(artist).map do |album|
-          album.songs
-        end.flatten
-      rescue Exception => e
+        albums_by(artist).map(&:songs).flatten
+      rescue
         []
       end
     end
@@ -148,9 +139,22 @@ module Muzak
       @all_albums = @hash["artists"].map { |_, a| a["albums"] }.flatten
 
       if deep?
-        @all_deep_songs = @all_albums.map { |aa| aa.map { |_, a| a["deep-songs"] } }.flatten
+        @all_deep_songs = @all_albums.map do |aa|
+          aa.map { |_, a| a["deep-songs"] }
+        end.flatten
       else
         @all_songs = @all_albums.map { |aa| aa.map { |_, a| a["songs"] } }.flatten
+      end
+    end
+
+    # Load the songs from an album hash into {Song} instances.
+    # @param ah [Hash] the album hash
+    # @api private
+    def load_songs(ah)
+      if deep?
+        ah["deep-songs"]
+      else
+        ah["songs"].map { |s| Song.new s }
       end
     end
   end

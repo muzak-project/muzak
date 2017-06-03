@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Muzak
   module Cmd
     # Reload the active index from the index file.
@@ -19,7 +21,7 @@ module Muzak
     # @cmdexample `muzak> dump-index`
     def dump_index
       build_response data: {
-        index: index.hash
+        index: index.hash,
       }
     end
 
@@ -28,7 +30,7 @@ module Muzak
     # @cmdexample `muzak> list-artists`
     def list_artists
       build_response data: {
-        artists: index.artists
+        artists: index.artists,
       }
     end
 
@@ -37,7 +39,7 @@ module Muzak
     # @cmdexample `muzak> list-albums`
     def list_albums
       build_response data: {
-        albums: index.album_names
+        albums: index.album_names,
       }
     end
 
@@ -50,7 +52,7 @@ module Muzak
       albums = index.albums_by(artist).map(&:title)
 
       build_response data: {
-        albums: albums
+        albums: albums,
       }
     end
 
@@ -63,7 +65,7 @@ module Muzak
       songs = index.songs_by(artist).map(&:title)
 
       build_response data: {
-        songs: songs
+        songs: songs,
       }
     end
   end

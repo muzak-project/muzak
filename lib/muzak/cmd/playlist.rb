@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Muzak
   module Cmd
     # List all currently available playlists.
@@ -5,7 +7,7 @@ module Muzak
     # @cmdexample `muzak> list-playlists`
     def list_playlists
       build_response data: {
-        playlists: Playlist.playlist_names
+        playlists: Playlist.playlist_names,
       }
     end
 
@@ -53,7 +55,7 @@ module Muzak
       artist = args.join(" ")
       songs = index.songs_by(artist)
 
-      unless songs.empty?
+      if songs.any?
         playlists[pname].add(songs)
         build_response
       else

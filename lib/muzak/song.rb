@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "taglib"
 require "json"
 
@@ -39,15 +41,14 @@ module Muzak
       @path = path
 
       TagLib::FileRef.open(path) do |ref|
-        break if ref.null?
-        @title = ref.tag.title
-        @artist = ref.tag.artist
-        @album = ref.tag.album
-        @year = ref.tag.year
-        @track = ref.tag.track
-        @genre = ref.tag.genre
-        @comment = ref.tag.comment
-        @length = ref.audio_properties.length
+        @title   = ref&.tag&.title
+        @artist  = ref&.tag&.artist
+        @album   = ref&.tag&.album
+        @year    = ref&.tag&.year
+        @track   = ref&.tag&.track
+        @genre   = ref&.tag&.genre
+        @comment = ref&.tag&.comment
+        @length  = ref&.audio_properties&.length
       end
 
       # provide some sane fallbacks

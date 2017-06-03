@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Muzak
   module Player
     # A no-op player that all players inherit from.
@@ -85,7 +87,7 @@ module Muzak
       # @param song [Song] the song to enqueue
       # @return [void]
       # @note NO-OP
-      def enqueue_song(song)
+      def enqueue_song(_song)
         debug "#enqueue_song"
       end
 
@@ -93,7 +95,7 @@ module Muzak
       # @param album [Album] the album to enqueue
       # @return [void]
       # @note NO-OP
-      def enqueue_album(album)
+      def enqueue_album(_album)
         debug "#enqueue_album"
       end
 
@@ -101,7 +103,7 @@ module Muzak
       # @param playlist [Playlist] the playlist to enqueue
       # @return [void]
       # @note NO-OP
-      def enqueue_playlist(playlist)
+      def enqueue_playlist(_playlist)
         debug "#enqueue_playlist"
       end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Muzak
   # A collection of convenience utilities for use throughout muzak.
   module Utils
@@ -38,13 +40,13 @@ module Muzak
     # @param color [Symbol] the color to use on the string
     # @param str [String] the string to format
     # @return [String] the color-formatted string
-    def pretty(color = :none, str)
+    def pretty(str, color = :none)
       colors = {
         none: 0,
         red: 31,
         green: 32,
         yellow: 33,
-        blue: 34
+        blue: 34,
       }
 
       "\e[#{colors[color]}m#{str}\e[0m"
@@ -63,22 +65,22 @@ module Muzak
     # @param args [Array<String>] the message(s)
     # @return [void]
     def danger(*args)
-      output pretty(:yellow, "warn"), args
+      output pretty("warn", :yellow), args
     end
 
     # Outputs a boxed error message.
     # @param args [Array<String>] the message(s)
     # @return [void]
     def error(*args)
-      context = self.is_a?(Module) ? name : self.class.name
-      output pretty(:red, "error"), "[#{context}]", args
+      context = is_a?(Module) ? name : self.class.name
+      output pretty("error", :red), "[#{context}]", args
     end
 
     # Outputs a boxed error message and then exits.
     # @param args [Array<String>] the message(s)
     # @return [void]
     def error!(*args)
-      error *args
+      error(*args)
       exit 1
     end
 
@@ -87,8 +89,8 @@ module Muzak
     # @return [void]
     def debug(*args)
       return unless debug?
-      context = self.is_a?(Module) ? name : self.class.name
-      output pretty(:yellow, "debug"), "[#{context}]", args
+      context = is_a?(Module) ? name : self.class.name
+      output pretty("debug", :yellow), "[#{context}]", args
     end
 
     # Outputs a boxed verbose message.
@@ -97,18 +99,19 @@ module Muzak
     def verbose(*args)
       return unless verbose?
 
-      output pretty(:blue, "verbose"), args
+      output pretty("verbose", :blue), args
     end
 
     # Returns a response hash containing the given data and error.
     # @param error [String] the error string, if needed
     # @param data [String, Hash] the data, if needed
     def build_response(error: nil, data: nil)
-      { response: {
+      {
+        response: {
           error: error,
           data: data,
-          method: caller_locations.first.label
-        }
+          method: caller_locations.first.label,
+        },
       }
     end
   end

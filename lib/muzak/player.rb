@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # we have to require StubPlayer first because ruby's module resolution is bad
 require_relative "player/stub_player"
 

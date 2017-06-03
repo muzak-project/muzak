@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # we have to require StubPlugin first because ruby's module resolution is bad
 require_relative "plugin/stub_plugin"
 
@@ -30,7 +32,7 @@ module Muzak
         Config.plugin?(pk.plugin_name) && pk.available?
       end
 
-      pks.map { |pk| pk.new }
+      pks.map(&:new)
     end
   end
 end

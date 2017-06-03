@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Muzak
   module Cmd
     # Activate the configured player.
@@ -12,7 +14,7 @@ module Muzak
       end
 
       build_response data: {
-        player: player.class.name
+        player: player.class.name,
       }
     end
 
@@ -27,7 +29,7 @@ module Muzak
       player.deactivate!
 
       build_response data: {
-        player: player.class.name
+        player: player.class.name,
       }
     end
 
@@ -87,7 +89,7 @@ module Muzak
       artist = args.join(" ")
       albums = index.albums_by(artist)
 
-      unless albums.empty?
+      if albums.any?
         albums.each do |album|
           player.enqueue_album album
         end
@@ -102,8 +104,7 @@ module Muzak
     # @cmdexample `muzak> enqueue-album Your Favorite Album`
     def enqueue_album(*args)
       album_name = args.join(" ")
-
-      album = index.albums[album_name]
+      album      = index.albums[album_name]
 
       if album
         player.enqueue_album album
@@ -122,7 +123,7 @@ module Muzak
       songs.each { |s| player.enqueue_song s }
 
       build_response data: {
-        jukebox: songs.map(&:full_title)
+        jukebox: songs.map(&:full_title),
       }
     end
 
@@ -131,7 +132,7 @@ module Muzak
     # @cmdexample `muzak> list-queue`
     def list_queue
       build_response data: {
-        queue: player.list_queue.map(&:title)
+        queue: player.list_queue.map(&:title),
       }
     end
 
@@ -160,7 +161,7 @@ module Muzak
     def now_playing
       if player.playing?
         build_response data: {
-          playing: player.now_playing&.full_title
+          playing: player.now_playing&.full_title,
         }
       else
         build_response error: "no currently playing song"

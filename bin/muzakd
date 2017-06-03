@@ -9,8 +9,7 @@ require "thread"
 
 Process.daemon unless Muzak::Config.debug || Muzak::Config.verbose
 
-muzak = Muzak::Instance.new
-
+muzak  = Muzak::Instance.new
 server = TCPServer.new Muzak::Config.daemon_port
 
 loop do

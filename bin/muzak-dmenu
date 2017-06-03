@@ -6,7 +6,7 @@ require "socket"
 require "json"
 require "open3"
 
-DMENU_EXEC = Muzak::Config.dmenu_exec || "dmenu"
+DMENU_EXEC       = Muzak::Config.dmenu_exec || "dmenu"
 DMENU_LINES_EXEC = Muzak::Config.dmenu_lines_exec || "dmenu -l 10"
 
 def fatal(msg)
@@ -16,7 +16,8 @@ end
 
 def dmenu(options, lines: false)
   dmenu_cmd = lines ? DMENU_LINES_EXEC : DMENU_EXEC
-  opts = options.join("\n")
+  opts      = options.join("\n")
+
   Open3.popen2(dmenu_cmd) do |stdin, stdout|
     stdin.puts opts
     stdin.close

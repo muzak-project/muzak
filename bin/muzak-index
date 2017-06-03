@@ -71,8 +71,8 @@ artist_names.each do |artist|
 
     info "indexing '#{artist}' - '#{album}'..."
 
-    album_hash = {}
-    album_hash["songs"] = []
+    album_hash               = {}
+    album_hash["songs"]      = []
     album_hash["deep-songs"] = []
 
     Dir.glob(File.join(tree, artist, album, "**")) do |file|

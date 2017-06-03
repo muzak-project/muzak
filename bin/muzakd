@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require "muzak"
 require "shellwords"
@@ -18,10 +19,10 @@ loop do
       cmd_argv = Shellwords.split(client.readline)
       client.puts(muzak.command(*cmd_argv).to_json)
       exit! 0 if cmd_argv.first == "quit"
-    rescue Exception => e
+    rescue => e
       client.puts({ response: { error: e.to_s } }.to_json)
     ensure
-      client.close if client
+      client&.close
     end
   end
 end

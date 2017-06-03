@@ -1,37 +1,38 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require "muzak"
 
-VERSION = 2
+VERSION = 3
 
 OPTS = {
   deep: !!(ARGV.delete("--deep") || ARGV.delete("-d")),
   verbose: !!(ARGV.delete("--verbose") || ARGV.delete("-V")),
   help: !!(ARGV.delete("--help") || ARGV.delete("-h")),
-  version: !!(ARGV.delete("--version") || ARGV.delete("-v"))
-}
+  version: !!(ARGV.delete("--version") || ARGV.delete("-v")),
+}.freeze
+
+HELP = <<~EOS
+  Usage: #{$PROGRAM_NAME} [options] [tree] [index]
+
+  Options:
+    --deep, -d      Build a "deep" index (contains metadata)
+    --verbose, -V   Be verbose while indexing
+    --help, -h      Print this help message
+    --version, -v   Print version information
+
+  Arguments:
+    [tree]          The filesystem tree to index (default: #{Muzak::Config.music})
+    [index]         The saved index (default: #{Muzak::Config::INDEX_FILE})
+EOS
 
 def help
-  puts <<~EOS
-    Usage: #{$PROGRAM_NAME} [options] [tree] [index]
-
-    Options:
-      --deep, -d      Build a "deep" index (contains metadata)
-      --verbose, -V   Be verbose while indexing
-      --help, -h      Print this help message
-      --version, -v   Print version information
-
-    Arguments:
-      [tree]          The filesystem tree to index (default: #{Muzak::Config.music})
-      [index]         The saved index (default: #{Muzak::Config::INDEX_FILE})
-  EOS
-
+  puts HELP
   exit
 end
 
 def version
   puts "muzak-index version #{VERSION}."
-
   exit
 end
 
@@ -55,7 +56,7 @@ index_file = ARGV.shift || Muzak::Config::INDEX_FILE
 index_hash = {
   "tree" => tree,
   "timestamp" => Time.now.to_i,
-  "deep" => OPTS[:deep]
+  "deep" => OPTS[:deep],
 }
 
 artist_names = Dir.entries(tree).reject! { |ent| ent.start_with?(".") }
@@ -79,9 +80,7 @@ artist_names.each do |artist|
 
       if Muzak::Utils.music?(file)
         album_hash["songs"] << file
-        if OPTS[:deep]
-          album_hash["deep-songs"] << Muzak::Song.new(file)
-        end
+        album_hash["deep-songs"] << Muzak::Song.new(file) if OPTS[:deep]
       end
     end
 
@@ -90,7 +89,7 @@ artist_names.each do |artist|
     # if any of the track numbers in the album are > 0 (the fallback),
     # sort by ID3 track numbers. otherwise, hope that the song
     # paths contain track numbers (e.g, "01 song.mp3").
-    if album_hash["deep-songs"].any? { |s| s.track > 0 }
+    if album_hash["deep-songs"].any? { |s| s.track.positive? }
       album_hash["deep-songs"].sort_by!(&:track)
     else
       album_hash["deep-songs"].sort_by!(&:path)

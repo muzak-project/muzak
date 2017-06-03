@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require "muzak"
 require "socket"
@@ -15,7 +16,7 @@ end
 
 def dmenu(options, lines: false)
   dmenu_cmd = lines ? DMENU_LINES_EXEC : DMENU_EXEC
-	opts = options.join("\n")
+  opts = options.join("\n")
   Open3.popen2(dmenu_cmd) do |stdin, stdout|
     stdin.puts opts
     stdin.close
@@ -25,9 +26,7 @@ end
 
 def muzak_cmd(command)
   begin
-    server_host = Muzak::Config.daemon_host
-    server_port = Muzak::Config.daemon_port
-    sock = TCPSocket.new server_host, server_port
+    sock = TCPSocket.new Muzak::Config.daemon_host, Muzak::Config.daemon_port
   rescue
     fatal "Is muzakd running?"
   end
@@ -60,4 +59,3 @@ command = "#{command.chomp} #{arguments}" if arguments
 puts command
 
 muzak_cmd command
-

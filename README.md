@@ -37,3 +37,4 @@ as well as on RubyDoc.
 * GUI "frontend"?
 * current indexing/sorting logic is terrible
 * figure out how to do events/album art in VLC
+* rewrite plugin event system

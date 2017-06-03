@@ -34,6 +34,9 @@ module Muzak
     # The directory for all user commands
     USER_COMMAND_DIR = File.join(CONFIG_DIR, "commands").freeze
 
+    # The glob pattern for all user commands
+    USER_COMMAND_GLOB = File.join(USER_COMMAND_DIR, "*.rb").freeze
+
     # All filename suffixes that muzak recognizes as music.
     MUSIC_SUFFIXES = [
       ".mp3",

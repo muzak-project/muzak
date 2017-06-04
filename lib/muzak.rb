@@ -14,5 +14,5 @@ require_relative "muzak/instance"
 # The primary namespace for muzak.
 module Muzak
   # Muzak's current version
-  VERSION = "0.5.0"
+  VERSION = "0.5.1"
 end

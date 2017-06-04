@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   ]
 
   s.add_runtime_dependency "taglib-ruby", "~> 0.7"
-  s.add_runtime_dependency "mpv", "~> 1.2", ">= 1.2.0"
+  s.add_runtime_dependency "mpv", "~> 2.0"
   s.add_runtime_dependency "vlc-client", "~> 0.0.7"
   s.add_runtime_dependency "tty-prompt", "~> 0.10.0"
   s.add_runtime_dependency "ruby-mpd", "~> 0.3.3"

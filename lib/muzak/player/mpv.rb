@@ -38,7 +38,7 @@ module Muzak
         args = DEFAULT_MPV_ARGS + configured_mpv_args
 
         @mpv = ::MPV::Session.new(user_args: args)
-        @mpv.callbacks << ::MPV::Callback.new(self, :dispatch_event!)
+        @mpv.callbacks << method(:dispatch_event!)
 
         instance.event :player_activated
       end
@@ -178,7 +178,7 @@ module Muzak
         # this is an experimental flag, but it could improve
         # muzak's load times substantially when used with a network
         # mounted music library
-        args << "--prefetch-playlist" if ::MPV::Server.has_flag?("--prefetch-playlist")
+        args << "--prefetch-playlist" if ::MPV::Server.flag?("--prefetch-playlist")
 
         args
       end
